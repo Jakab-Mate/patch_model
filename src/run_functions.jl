@@ -4,8 +4,6 @@ function generic_run(sample::sample_struct;
     path::String=homedir(),
     t_span::Tuple{Int64, Int64}=(0, 1000), 
     n_resources::Union{Int64, Nothing}=nothing, 
-    n_species::Int64=10, 
-    n_invaders::Int64=0,
     t_inv::Float64=25.0, 
     t_inv_0::Float64=100.0, 
     cutoff::Float64=0.0001, 
@@ -17,15 +15,19 @@ function generic_run(sample::sample_struct;
     host_regulation::Bool=true)
 
     if isnothing(D)
-        generative_functions.create_metabolism()
+        D, W_ba = create_metabolism()
         if !isnothing(W_ba)
             println("WARNING: Supplied energy yield matrix (W_ba) but no stoichiometric matrix (D). Overwriting W_ba to ensure compatibility")
         end
     else
         if isnothing(W_ba)
-            generative_functions.create_metabolism()
+            D, W_ba = create_metabolism()
             println("WARNING: Supplied stoichiometric matrix (D) but no energy yield matrix (W_ba). Overwriting D to ensure compatibility")
         end
+    end
+
+    if isnothing(n_resources)
+        n_resources = size(D, 1)
     end
 
     D_row, D_col = size(D)
@@ -40,10 +42,6 @@ function generic_run(sample::sample_struct;
         number of resources is $n_resources, sizes of D are ($W_row, $W_col)"))
     end
 
-    if isnothing(n_resources)
-        n_resources = size(D, 1)
-    end
-
     if isnothing(tau)
         tau = ones(Float64, n_resources)
     end
@@ -51,6 +49,9 @@ function generic_run(sample::sample_struct;
     if isnothing(alpha)
         alpha = vcat([100.0], zeros(Float64, n_resources-1))
     end
+
+    n_species = sample.n_species
+    n_invaders = sample.n_invaders
 
     u0 = vcat(sample.species_abundance, sample.resource_abundance)
     params = param_struct(n_species+n_invaders, n_resources, 1:n_species, sample.C, D, W_ba, sample.n_reactions, sample.n_splits, sample.m, phi, eta, tau, alpha, sample.a, sample.k, host_regulation)

@@ -33,6 +33,7 @@ end
 
 struct sample_struct
     n_species::Int64
+    n_invaders::Int64
     C::Array{Float64, 3}
     family_ids::Array{Int64}
     m::Array{Float64}

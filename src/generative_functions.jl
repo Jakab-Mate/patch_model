@@ -37,8 +37,6 @@ function create_metabolism(; n_resources::Int64=10, n_levels::Int64=5, energy_yi
     return D, W_ba
 end
 
-export create_metabolism
-
 function create_species_pool(D::Matrix; rng=nothing, n_families::Int64=5, 
     family_size::Int64=100, dirichlet_hyper::Real=100, between_family_var::Real=0.1, inside_family_var::Real=0.05, 
     h::Real=1, maintenance::Real=0.1, specialist::Real=1, generalist::Real=1, 

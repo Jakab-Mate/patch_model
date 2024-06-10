@@ -3,6 +3,7 @@ module TestPkg
 using Random
 using Dates
 using Plots 
+using Distributions
 using DifferentialEquations 
 using LinearAlgebra 
 using MicrobiomeAnalysis
@@ -14,6 +15,7 @@ include("equations.jl")
 include("callbacks.jl")
 include("run_functions.jl")
 include("plot_functions.jl")
+include("helper_functions.jl")
 
 export(generic_run)
 export(sample_pool)
