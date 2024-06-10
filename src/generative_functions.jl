@@ -1,6 +1,3 @@
-include("helper_functions.jl")
-include("structs.jl")
-
 function create_metabolism(; n_resources::Int64=10, n_levels::Int64=5, energy_yields::String="Uniform_1", rng=nothing)
     if isnothing(rng)
         rng = MersenneTwister()
@@ -42,10 +39,14 @@ end
 
 export create_metabolism
 
-function create_species_pool(rng::Any, D::Matrix; n_families::Int64=5, 
+function create_species_pool(D::Matrix; rng=nothing, n_families::Int64=5, 
     family_size::Int64=100, dirichlet_hyper::Real=100, between_family_var::Real=0.1, inside_family_var::Real=0.05, 
     h::Real=1, maintenance::Real=0.1, specialist::Real=1, generalist::Real=1, 
     a_dist::Union{Distributions.Sampleable, Nothing}=nothing, k_dist::Union{Distributions.Sampleable, Nothing}=nothing)
+
+    if isnothing(rng)
+        rng = MersenneTwister()
+    end
 
     n_resources::Int64 = length(D[:, 1])
     
