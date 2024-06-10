@@ -1,5 +1,12 @@
 module TestPkg
 
+using Random
+using Dates
+using Plots 
+using DifferentialEquations 
+using LinearAlgebra 
+using MicrobiomeAnalysis
+
 include("structs.jl")
 include("generative_functions.jl")
 include("sample_pool.jl")

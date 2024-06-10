@@ -1,11 +1,10 @@
 include("helper_functions.jl")
 include("structs.jl")
 
-using Distributions, StatsBase, Random
-
-export create_species_pool
-
-function create_metabolism(rng::Any; n_resources::Int64=10, n_levels::Int64=5, energy_yields::String="Uniform_1")
+function create_metabolism(; n_resources::Int64=10, n_levels::Int64=5, energy_yields::String="Uniform_1", rng=nothing)
+    if isnothing(rng)
+        rng = MersenneTwister()
+    end
 
     levels::Vector{Int64} = vcat(1:n_levels, rand(rng, 2:n_levels-1, n_resources - n_levels))
     levels = sort(levels)

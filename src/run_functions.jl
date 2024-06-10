@@ -1,9 +1,13 @@
 include("structs.jl")
 include("plot_functions.jl")
+include("generative_functions.jl")
 
-function generic_run(path, D, W_ba, sample::sample_struct; 
+function generic_run(sample::sample_struct;
+    D = nothing,
+    W_ba = nothing,
+    path::String=homedir(),
     t_span::Tuple{Int64, Int64}=(0, 1000), 
-    n_resources::Int64=10, 
+    n_resources::Union{Int64, nothing}=nothing, 
     n_species::Int64=10, 
     n_invaders::Int64=0,
     t_inv::Float64=25.0, 
@@ -15,6 +19,34 @@ function generic_run(path, D, W_ba, sample::sample_struct;
     alpha::Union{Vector{Float64}, Nothing}=nothing,
     plot::Bool=true,
     host_regulation::Bool=true)
+
+    if isnothing(D)
+        generative_functions.create_metabolism()
+        if !isnothing(W_ba)
+            println("WARNING: Supplied energy yield matrix (W_ba) but no stoichiometric matrix (D). Overwriting W_ba to ensure compatibility")
+        end
+    else
+        if isnothing(W_ba)
+            generative_functions.create_metabolism()
+            println("WARNING: Supplied stoichiometric matrix (D) but no energy yield matrix (W_ba). Overwriting D to ensure compatibility")
+        end
+    end
+
+    D_row, D_col = size(D)
+    if (n_resources != D_row) || (n_resources != D_col)
+        throw(DomainError("Number of resources does not match the size of the stoichiometric matrix (D) \n 
+        number of resources is $n_resources, sizes of D are ($D_row, $D_col)"))
+    end
+
+    W_row, W_col = size(W_ba)
+    if (n_resources != W_row) || (n_resources != W_col)
+        throw(DomainError("Number of resources does not match the size of the energy yield matrix (W_ba) \n 
+        number of resources is $n_resources, sizes of D are ($W_row, $W_col)"))
+    end
+
+    if isnothing(n_resources)
+        n_resources = size(D, 1)
+    end
 
     if isnothing(tau)
         tau = ones(Float64, n_resources)

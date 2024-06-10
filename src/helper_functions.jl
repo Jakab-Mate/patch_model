@@ -1,4 +1,3 @@
-
 function non_zero_pos(A)
     indices = findall(x -> x != 0, A)
     tuple_indices = Tuple.(indices)

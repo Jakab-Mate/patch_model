@@ -1,5 +1,3 @@
-using DifferentialEquations
-
 function affect!(integrator, t_inv, start_time, n_invaders, n_species, cutoff)
     integrator.p.present_species = findall(x -> x > cutoff, integrator.u[1:(n_species+n_invaders)])
     println("affect outside")

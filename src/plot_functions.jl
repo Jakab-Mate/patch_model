@@ -1,5 +1,3 @@
-using MicrobiomeAnalysis, Plots
-
 function aggregate_by_rowdata(se, row, assay_name)
     row_data = se.rowdata[!, Symbol(row)]
     row_set = Set(row_data)

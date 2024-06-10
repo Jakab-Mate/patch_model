@@ -1,8 +1,10 @@
-using StatsBase, Random
 
 include("structs.jl")
 
-function sample_pool(rng, p, n_resources::Int64, n_species::Int64=10, n_invaders::Int64=10)
+function sample_pool(p, n_resources::Int64, n_species::Int64=10, n_invaders::Int64=10; rng=nothing)
+    if isnothing(rng)
+        rng = MersenneTwister()
+    end
 
     n_sampled = n_species + n_invaders
 

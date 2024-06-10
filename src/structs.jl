@@ -1,7 +1,3 @@
-export param_struct
-export pool_struct
-export sample_struct
-
 mutable struct param_struct
     n_species::Int64
     n_resources::Int64

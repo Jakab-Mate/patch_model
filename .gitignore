@@ -1,1 +1,5 @@
 /Manifest.toml
+/Manifest.toml.bak
+/Project.toml.bak
+/src/setparams_run.jl
+/src/test.jl
