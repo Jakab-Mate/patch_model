@@ -1,13 +1,9 @@
-include("structs.jl")
-include("plot_functions.jl")
-include("generative_functions.jl")
-
 function generic_run(sample::sample_struct;
     D = nothing,
     W_ba = nothing,
     path::String=homedir(),
     t_span::Tuple{Int64, Int64}=(0, 1000), 
-    n_resources::Union{Int64, nothing}=nothing, 
+    n_resources::Union{Int64, Nothing}=nothing, 
     n_species::Int64=10, 
     n_invaders::Int64=0,
     t_inv::Float64=25.0, 
