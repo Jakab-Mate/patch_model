@@ -5,15 +5,20 @@ function non_zero_pos(A)
 end
 
 function normalize(A; h::Real=0)
-    if sum(A) == 0 || length(A) == 0
-        throw(DomainError("Cannot normalize an empty array or an array that sums to zero."))
+    if isempty(A)
+        throw(DomainError("Cannot normalize an empty array."))
     else
-        if h == 0
-            return A ./ sum(A)
-        else
-            return A ./ sum(A .^ h)
+        if sum(A) == 0
+            throw(DomainError("Cannot normalize an array that sums to zero."))
         end
-    end         
+    end
+
+    if h == 0
+        return A ./ sum(A)
+    else
+        return A ./ sum(A .^ h)
+    end
+           
 end
 
 function sample_reaction_indices(rng, D, number_of_reactions)
