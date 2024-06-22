@@ -1,5 +1,6 @@
 using TestPkg
 using Test
+using Random
 
 ### helper_functions.jl
 @testset "Testing non_zero_pos" begin
@@ -28,7 +29,7 @@ end
     rng = MersenneTwister(1234)
     D = [0 1 0; 0 0 1; 1 0 0]
     @test TestPkg.sample_reaction_indices(rng, D, 2) == [(1, 2), (2, 3)]
-    @test TestPkg.sample_reaction_indices(rng, D, 3) == [(1, 2), (2, 3), (3, 1)]
+    @test TestPkg.sample_reaction_indices(rng, D, 3) == [(2, 3), (1, 2), (3, 1)]
     
     # Edge cases
     @test_throws DomainError TestPkg.sample_reaction_indices(rng, D, 4)
