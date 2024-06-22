@@ -40,7 +40,7 @@ end
     rng = MersenneTwister(1234)
     n_levels = 5
     n_resources = 10
-    D, W_ba = create_metabolism(n_resources=n_resources, n_levels=n_levels, energy_yields=Uniform_1, rng=rng)
+    D, W_ba = create_metabolism(n_resources=n_resources, n_levels=n_levels, energy_yields="Uniform_1", rng=rng)
     @test size(D) == (10, 10)
     @test size(W_ba) == (10, 10)
     @test length(D[:,1]) == n_resources
