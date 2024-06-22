@@ -3,10 +3,16 @@ function create_metabolism(; n_resources::Int64=10, n_levels::Int64=5, energy_yi
         rng = MersenneTwister()
     end
 
+    if n_resources < n_levels
+        throw(DomainError("Number of resources should be greater than or equal to the number of levels"))
+    end
+
+    if n_resources < 2
+        throw(DomainError("Number of resources should be greater than 1"))
+    end
+
     levels::Vector{Int64} = vcat(1:n_levels, rand(rng, 2:n_levels-1, n_resources - n_levels))
     levels = sort(levels)
-    print(levels, "\n")
-
     
     W = zeros(Float64, n_resources)
     for b in n_resources-1:-1:1
@@ -20,7 +26,6 @@ function create_metabolism(; n_resources::Int64=10, n_levels::Int64=5, energy_yi
             end
         end
     end
-    print("\n W: ", W)
 
     D = zeros(Int64, n_resources, n_resources)
     W_ba = zeros(Float64, n_resources, n_resources)
@@ -32,8 +37,7 @@ function create_metabolism(; n_resources::Int64=10, n_levels::Int64=5, energy_yi
             end
         end
     end
-    
-    print(typeof(D), typeof(W_ba))
+
     return D, W_ba
 end
 
@@ -89,7 +93,6 @@ function create_species_pool(D::Matrix; rng=nothing, n_families::Int64=5,
             family_number_of_reactions = rand(rng, [2, 3])
         end
 
-        print("\n Family $family has $family_number_of_reactions reactions \n")
         n_reactions[family_range] .= family_number_of_reactions
 
         prior_values = normalize(rand!(rng, zeros(family_number_of_reactions))) .* dirichlet_hyper
@@ -99,7 +102,6 @@ function create_species_pool(D::Matrix; rng=nothing, n_families::Int64=5,
         for react in family_reaction_indices
             family_n_splits += (react[1] - react[2])
         end
-        println("family splits $family_n_splits")
         n_splits[family_range] .= family_n_splits
 
         for species in 1:family_size

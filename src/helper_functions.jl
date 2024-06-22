@@ -5,14 +5,23 @@ function non_zero_pos(A)
 end
 
 function normalize(A; h::Real=0)
-    if h == 0
-        return A ./ sum(A)
+    if sum(A) == 0 || length(A) == 0
+        throw(DomainError("Cannot normalize an empty array or an array that sums to zero."))
     else
-        return A ./ sum(A .^ h)
+        if h == 0
+            return A ./ sum(A)
+        else
+            return A ./ sum(A .^ h)
+        end
     end         
 end
 
 function sample_reaction_indices(rng, D, number_of_reactions)
+    total_different_reactions = length(non_zero_pos(D))
+    if total_different_reactions < number_of_reactions
+        throw(DomainError("Number of sampled reactions ($number_of_reactions) should be smaller than the total number of reactions ($total_different_reactions)"))
+    end
+
     helper_D = copy(D)
     chosen_indices = Array{Tuple}(undef, number_of_reactions)
     for i in 1:number_of_reactions
