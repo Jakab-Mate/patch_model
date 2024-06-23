@@ -98,15 +98,15 @@ end
     p = create_species_pool(D, n_families=5, family_size=100, rng=rng)
     sample = sample_pool(p, 1, 1, rng=rng)
     @test sample isa TestPkg.sample_struct
-    @test size(sample.species_C_matrices) == (10, 10, 2)
-    @test size(sample.species_family_ids) == (2,)
-    @test size(sample.species_m) == (2,)
-    @test size(sample.species_n_reactions) == (2,)
-    @test size(sample.species_n_splits) == (2,)
-    @test size(sample.species_a) == (2,)
-    @test size(sample.species_k) == (2,)
-    @test size(sample.species_initial_abundances) == (2,)
-    @test size(sample.resource_initial_abundances) == (10,)    
+    @test size(sample.C) == (10, 10, 2)
+    @test size(sample.family_ids) == (2,)
+    @test size(sample.m) == (2,)
+    @test size(sample.n_reactions) == (2,)
+    @test size(sample.n_splits) == (2,)
+    @test size(sample.a) == (2,)
+    @test size(sample.k) == (2,)
+    @test size(sample.species_abundance) == (2,)
+    @test size(sample.resource_abundance) == (10,)    
     
     # Edge cases
 
