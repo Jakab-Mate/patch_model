@@ -97,7 +97,7 @@ end
     D, W_ba = create_metabolism(rng=rng)
     p = create_species_pool(D, n_families=5, family_size=100, rng=rng)
     sample = sample_pool(p, 1, 1, rng=rng)
-    @test sample isa sample_struct
+    @test sample isa TestPkg.sample_struct
     @test size(sample.species_C_matrices) == (10, 10, 2)
     @test size(sample.species_family_ids) == (2,)
     @test size(sample.species_m) == (2,)
@@ -118,7 +118,7 @@ end
 @testset "Testing equations" begin
     u = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
     #params = param_struct(n_species+n_invaders, n_resources, 1:n_species, sample.C, D, W_ba, sample.n_reactions, sample.n_splits, sample.m, phi, eta, tau, alpha, sample.a, sample.k, host_regulation)
-    p = param_struct(10, 10, 1:10, ones(10, 10, 10), ones(10, 10), ones(10, 10), ones(10), ones(10), ones(10), 1, 1, ones(10), ones(10), ones(10), ones(10), true)
+    p = TestPkg.param_struct(10, 10, 1:10, ones(10, 10, 10), ones(10, 10), ones(10, 10), ones(10), ones(10), ones(10), 1, 1, ones(10), ones(10), ones(10), ones(10), true)
     t = 0
     out = TestPkg.equations(u, p, t)
     @test size(out) == (20,)
