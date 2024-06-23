@@ -110,7 +110,7 @@ end
     
     # Edge cases
 
-    @test_throws DomainError sample_pool(pool_struct(zeros(1, 1, 1), [1], [1], [1], [1], [1], [1]), 1, 1, rng=rng)
+    @test_throws DomainError sample_pool(TestPkg.pool_struct(zeros(1, 1, 1), [1], [1], [1], [1], [1], [1]), 1, 1, rng=rng)
     @test_throws DomainError sample_pool(p, 501, rng=rng)
 end
 
