@@ -53,3 +53,14 @@ jobs:
           file: lcov.info
         env:
           CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
+  compathelper:
+      name: CompatHelper
+      runs-on: ubuntu-latest
+      steps:
+        - uses: actions/checkout@v4
+        - uses: julia-actions/setup-julia@v1
+          with:
+            version: '1.6'
+        - run: julia -e 'using Pkg; Pkg.add("CompatHelper"); using CompatHelper; CompatHelper.main()'
+          env:
+            COMPATHELPER_TOKEN: ${{ secrets.COMPATHELPER_TOKEN }}
