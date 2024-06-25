@@ -1,4 +1,4 @@
-module TestPkg
+module MiCroSim
 
 using Random
 using Dates
