@@ -1,17 +1,17 @@
 # Microbial Cross-feeding Community Simulator
 
-[![Build Status](https://github.com/Jakab-Mate/TestPkg.jl/actions/workflows/CI.yml/badge.svg?branch=main)](https://github.com/Jakab-Mate/TestPkg.jl/actions/workflows/CI.yml?query=branch%3Amain)
+[![Build Status](https://github.com/Jakab-Mate/MiCroSim.jl/actions/workflows/CI.yml/badge.svg?branch=main)](https://github.com/Jakab-Mate/MiCroSim.jl/actions/workflows/CI.yml?query=branch%3Amain)
 
 ## A general-purpose microbial consumer-resource model that outputs simulated data in the SummarizedExperiment (SE) format.
 
 This project provides a quick and easy approach for simulating microbial community dynamics based purely on the metabolic interactions between them. The model represents distinct microbial species as matrices that describe their net conversion rates in the form *A -> nB*, where *A* is the metabolite consumed, *B* is the metabolite excreted into a shared environment, and *n* is a a stoichiometric constant. Additionally, the species housing the above net conversion (or reaction), will have generated some value (energy) during the process, which contributes to the growth of its population. Once excreted, metabolite *B* may be utilized by a different species, enabling cross-feeding between the populations present in the community. The model incorporates a feeding term that describes the type and amount of resources that flow into the system in unit time. All observed growth in the community can be derived from this inflow of resources: some species will be able to directly consume them, while others will rely on different species to perform one or multiple conversions to arrive at their desired resources. 
 
 ### Installation
-To install TestPkg.jl directly from the github repository, use:
+To install MiCroSim.jl directly from the github repository, use:
 
 ```julia
 using Pkg
-Pkg.add(url="https://github.com/Jakab-Mate/TestPkg.jl.git")
+Pkg.add(url="https://github.com/Jakab-Mate/MiCroSim.jl.git")
 ```
 
 ### Workflow

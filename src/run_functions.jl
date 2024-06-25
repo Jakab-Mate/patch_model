@@ -3,7 +3,6 @@ function generic_run(sample::sample_struct;
     W_ba = nothing,
     path::String=homedir(),
     t_span::Tuple{Int64, Int64}=(0, 1000), 
-    n_resources::Union{Int64, Nothing}=nothing, 
     t_inv::Float64=25.0, 
     t_inv_0::Float64=100.0, 
     cutoff::Float64=0.0001, 
@@ -26,9 +25,7 @@ function generic_run(sample::sample_struct;
         end
     end
 
-    if isnothing(n_resources)
-        n_resources = size(D, 1)
-    end
+    n_resources = size(D, 1)
 
     D_row, D_col = size(D)
     if (n_resources != D_row) || (n_resources != D_col)
@@ -71,7 +68,7 @@ function generic_run(sample::sample_struct;
     );
     coldata = DataFrame(
         name = ["t$i" for i in 1:length(t)],
-        condition = rand(["lake", "ocean", "river"], length(t)),
+        condition = rand(["lake", "ocean", "river"], length(t)), # just a placeholder
         time = 1:length(t)
     );
 
