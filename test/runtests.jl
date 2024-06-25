@@ -1,38 +1,38 @@
-using TestPkg
+using MiCroSim
 using Test
 using Random
 
 ### helper_functions.jl
 @testset "Testing non_zero_pos" begin
-    @test TestPkg.non_zero_pos([1, 0, 3]) == [(1,), (3,)]
-    @test TestPkg.non_zero_pos([0, 0, 0]) == []
-    @test TestPkg.non_zero_pos([1, 2, 3]) == [(1,), (2,), (3,)]
-    @test TestPkg.non_zero_pos([0 1; 0 3]) == [(1, 2), (2, 2)]
+    @test MiCroSim.non_zero_pos([1, 0, 3]) == [(1,), (3,)]
+    @test MiCroSim.non_zero_pos([0, 0, 0]) == []
+    @test MiCroSim.non_zero_pos([1, 2, 3]) == [(1,), (2,), (3,)]
+    @test MiCroSim.non_zero_pos([0 1; 0 3]) == [(1, 2), (2, 2)]
     
     # Edge cases
-    @test TestPkg.non_zero_pos([]) == []
+    @test MiCroSim.non_zero_pos([]) == []
 end
 
 @testset "Testing normalize" begin
-    @test TestPkg.normalize([1, 2, 3]) == [1/6, 1/3, 1/2]
-    @test TestPkg.normalize([1, 2, 3], h=1) == [1/6, 1/3, 1/2]
-    @test TestPkg.normalize([1, 2, 3], h=2) == [1/14, 2/14, 3/14]
-    @test TestPkg.normalize([0, 6, 0], h=2) == [0, 6/36, 0]
+    @test MiCroSim.normalize([1, 2, 3]) == [1/6, 1/3, 1/2]
+    @test MiCroSim.normalize([1, 2, 3], h=1) == [1/6, 1/3, 1/2]
+    @test MiCroSim.normalize([1, 2, 3], h=2) == [1/14, 2/14, 3/14]
+    @test MiCroSim.normalize([0, 6, 0], h=2) == [0, 6/36, 0]
     
     # Edge cases
-    @test_throws DomainError TestPkg.normalize([])
-    @test_throws DomainError TestPkg.normalize([0])
-    @test_throws DomainError TestPkg.normalize([1, 0, -1])
+    @test_throws DomainError MiCroSim.normalize([])
+    @test_throws DomainError MiCroSim.normalize([0])
+    @test_throws DomainError MiCroSim.normalize([1, 0, -1])
 end
 
 @testset "Testing sample_reaction_indices" begin
     rng = MersenneTwister(1234)
     D = [0 1 0; 0 0 1; 1 0 0]
-    @test TestPkg.sample_reaction_indices(rng, D, 2) == [(1, 2), (2, 3)]
-    @test TestPkg.sample_reaction_indices(rng, D, 3) == [(2, 3), (1, 2), (3, 1)]
+    @test MiCroSim.sample_reaction_indices(rng, D, 2) == [(1, 2), (2, 3)]
+    @test MiCroSim.sample_reaction_indices(rng, D, 3) == [(2, 3), (1, 2), (3, 1)]
     
     # Edge cases
-    @test_throws DomainError TestPkg.sample_reaction_indices(rng, D, 4)
+    @test_throws DomainError MiCroSim.sample_reaction_indices(rng, D, 4)
 end
 
 ### generative_functions.jl
@@ -97,7 +97,7 @@ end
     D, W_ba = create_metabolism(rng=rng)
     p = create_species_pool(D, n_families=5, family_size=100, rng=rng)
     sample = sample_pool(p, 1, 1, rng=rng)
-    @test sample isa TestPkg.sample_struct
+    @test sample isa MiCroSim.sample_struct
     @test size(sample.C) == (10, 10, 2)
     @test size(sample.family_ids) == (2,)
     @test size(sample.m) == (2,)
@@ -110,7 +110,7 @@ end
     
     # Edge cases
 
-    @test_throws DomainError sample_pool(TestPkg.pool_struct(zeros(1, 1, 1), [1], [1], [1], [1], [1], [1]), 1, 1, rng=rng)
+    @test_throws DomainError sample_pool(MiCroSim.pool_struct(zeros(1, 1, 1), [1], [1], [1], [1], [1], [1]), 1, 1, rng=rng)
     @test_throws DomainError sample_pool(p, 501, rng=rng)
 end
 
@@ -118,9 +118,9 @@ end
 @testset "Testing equations" begin
     u = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
     #params = param_struct(n_species+n_invaders, n_resources, 1:n_species, sample.C, D, W_ba, sample.n_reactions, sample.n_splits, sample.m, phi, eta, tau, alpha, sample.a, sample.k, host_regulation)
-    p = TestPkg.param_struct(10, 10, 1:10, ones(10, 10, 10), ones(10, 10), ones(10, 10), ones(10), ones(10), ones(10), 1, 1, ones(10), ones(10), ones(10), ones(10), true)
+    p = MiCroSim.param_struct(10, 10, 1:10, ones(10, 10, 10), ones(10, 10), ones(10, 10), ones(10), ones(10), ones(10), 1, 1, ones(10), ones(10), ones(10), ones(10), true)
     t = 0
-    out = TestPkg.equations(u, p, t)
+    out = MiCroSim.equations(u, p, t)
     @test size(out) == (20,)
 
 end
