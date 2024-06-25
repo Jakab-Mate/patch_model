@@ -4,7 +4,15 @@
 
 ## A general-purpose microbial consumer-resource model that outputs simulated data in the SummarizedExperiment (SE) format.
 
-This project offers a quick and easy method for simulating microbial community dynamics based solely on their metabolic interactions. The model represents distinct microbial species as matrices that describe their net conversion rates in the form *A -> nB*, where *A* is the metabolite consumed, *B* is the metabolite excreted into a shared environment, and *n* is a stoichiometric constant. Additionally, the species housing the above net conversion (or reaction), will have generated some value (energy) during the process, which contributes to the growth of its population. Once excreted, metabolite *B* may be utilized by a different species, enabling cross-feeding between the populations present in the community. The model incorporates a feeding term that describes the type and amount of resources that flow into the system per unit time. All observed growth in the community can be derived from this inflow of resources: some species will be able to directly consume them, while others will rely on different species to perform one or multiple conversions to arrive at their desired resources. 
+This project offers a quick and easy method for simulating microbial community dynamics based solely on their metabolic interactions. The model represents distinct microbial species as matrices that describe their net conversion rates in the form *A -> nB*, where *A* is the metabolite consumed, *B* is the metabolite excreted into a shared environment, and *n* is a stoichiometric constant. Additionally, the species housing the above net conversion (or reaction), will have generated some value (energy) during the process, which contributes to its own growth. Once excreted, metabolite *B* may be utilized by a different species, enabling cross-feeding (syntrophy) between the populations present in the community. The model incorporates a feeding term that describes the type and amount of resources that flow into the system per unit time. All observed growth in the community can be derived from this inflow of resources: some species will be able to directly consume the resources flowing into the habitat (as a renewable or depletable resource), while the preferred resources for other species will be the byproducts of the reaction(s) performed by different species.
+
+### Applicability
+
+* **Simulate the growth of an initially populated microbial community and find the equilibrium abundances**
+
+* **Simulate the succession of an initially empty microbial habitat where colonizers appear one by one**
+
+* **Simulate the resilience of a microbial community against invaders appearing one by one**
 
 ### Installation
 To install MiCroSim.jl directly from the github repository, use:
@@ -176,11 +184,11 @@ D, W_ba = create_metabolism(rng=my_rng)
 
 ### Contribution
 
-The best way to contribute to this project is by curating universal metabolisms in the form of stoichiometric and energy yield matrices. Admittedly, the reaction systems that may arise from `create_metabolism()` are quite limited, but there is no reason why this model couldn't handle synthetic processes for example, where energy yields are allowed to be negative. Furthermore, pathway databases such as KEGG coupled with microbial whole genome data open the possibility for deriving net conversions from real-world experiments.
+The best way to contribute to this project is by curating universal metabolisms in the form of stoichiometric and energy yield matrices. Admittedly, the reaction systems that may arise from `create_metabolism()` are limited, but more complex metabolic networks can also be implemented, for example modeling synthetic processes by setting energy yields negative (that is, a species invests into producing a metabolite). Furthermore, pathway databases such as KEGG coupled with microbial whole genome data open the possibility for deriving net conversions from real-world experiments.
 
 ### Funding
 
-**This project was funded by the Horizon 2020 funding programme**
+**This project received funding from the European Union’s Horizon 2020 research and innovation programme (under grant agreement 952914; FindingPheno).**
 
 ### Contact me
 
