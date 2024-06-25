@@ -4,7 +4,7 @@
 
 ## A general-purpose microbial consumer-resource model that outputs simulated data in the SummarizedExperiment (SE) format.
 
-This project provides a quick and easy approach for simulating microbial community dynamics based purely on the metabolic interactions between them. The model represents distinct microbial species as matrices that describe their net conversion rates in the form *A -> nB*, where *A* is the metabolite consumed, *B* is the metabolite excreted into a shared environment, and *n* is a a stoichiometric constant. Additionally, the species housing the above net conversion (or reaction), will have generated some value (energy) during the process, which contributes to the growth of its population. Once excreted, metabolite *B* may be utilized by a different species, enabling cross-feeding between the populations present in the community. The model incorporates a feeding term that describes the type and amount of resources that flow into the system in unit time. All observed growth in the community can be derived from this inflow of resources: some species will be able to directly consume them, while others will rely on different species to perform one or multiple conversions to arrive at their desired resources. 
+This project offers a quick and easy method for simulating microbial community dynamics based solely on their metabolic interactions. The model represents distinct microbial species as matrices that describe their net conversion rates in the form *A -> nB*, where *A* is the metabolite consumed, *B* is the metabolite excreted into a shared environment, and *n* is a stoichiometric constant. Additionally, the species housing the above net conversion (or reaction), will have generated some value (energy) during the process, which contributes to the growth of its population. Once excreted, metabolite *B* may be utilized by a different species, enabling cross-feeding between the populations present in the community. The model incorporates a feeding term that describes the type and amount of resources that flow into the system per unit time. All observed growth in the community can be derived from this inflow of resources: some species will be able to directly consume them, while others will rely on different species to perform one or multiple conversions to arrive at their desired resources. 
 
 ### Installation
 To install MiCroSim.jl directly from the github repository, use:
@@ -22,24 +22,24 @@ The functions in this package rely on each other's outputs, so generally you wil
 
 3. **sample_pool(...)**<span style="display:inline-block; width: 100px;"></span>Chooses the species that will appear in the simulation by sampling from the species pool
 
-4. **generic_run(...)**<span style="display:inline-block; width: 107px;"></span>Takes the sampled species and simulates their dynamics based on a set of ODE-s
+4. **generic_run(...)**<span style="display:inline-block; width: 107px;"></span>Takes the sampled species and simulates their dynamics based on a set of ODEs
 
-Detailed instructions for the usage of each function can be found in their dedicated sections.
+Detailed instructions for using each function can be found in their dedicated sections.
 
 ### `create_metabolism()`
 
 This function generates the set of all possible reactions, or in other words a universal metabolism. Each reaction is characterized by 4 attributes:
-the metabolite that is being consumed, the metabolite that is being produced, the stoichiometric constant (unit resource produced per unit resource consunmed), and the energy that the species gains per unit resource consumed. 
+the metabolite that is being consumed, the metabolite that is being produced, the stoichiometric constant (unit resource produced per unit resource consumed), and the energy that the species gains per unit resource consumed. 
 
 `create_metabolism()` outputs two matrices that hold the stoichiometric constants and the energy gains respectively. Each of these matrices is of size *RxR*, where *R* is the number of different resources, and each entry inside them corresponds to a specific reaction, where the column index indicates the resource being consumed, and the row index indicates the resource being produced. Importantly, the positions of zeros in these two matrices must align, and those reactions will not be possible.
 
-To ensure that energy is not created out of thin are, we use the following equation to calculate the energy yields for each reaction:
+To ensure energy conservation, we use the following equation to calculate the energy yields for each reaction:
 
 ![formula](./images/energy_conservation.png)
 
-where *w_a* and *w_b* deonote the energy content of the resources and *D_ba* is the stoichiometric constant.
+where *w_a* and *w_b* denote the energy content of the resources and *D_ba* is the stoichiometric constant.
 
-To simulate a gut-microbiome scenario, where most reactions are catabolic, `create_meatbolism()` operates under the following assumptions:
+To simulate a gut-microbiome scenario, where most reactions are catabolic, `create_metabolism()` operates under the following assumptions:
 * Resources can be grouped into different levels of decomposition, based on their energy content
 * Reactions will always yield some energy, meaning that the resource produced will always be of a lower level (more decomposed) than the resource consumed
 
@@ -48,20 +48,20 @@ To simulate a gut-microbiome scenario, where most reactions are catabolic, `crea
 This function has no mandatory parameters.
 
 **Optional parameters**
-* ***n_resources:*** The number of different resources in the network, which determines the size of the outputted matrices. *Default value is 10*
+* ***n_resources:*** The number of different resources in the network, which determines the size of the output matrices. *Default value is 10*
 * ***n_levels:*** The number of levels of decomposition. Must be smaller or equal to *n_resources*, because each level will have at least one resource belonging to it. The lowest and the highest levels can only have one resource, and thus, the remaining resources will be of intermediate levels. *Default value is 5*
 * ***energy_yields:*** Either "Uniform_1" or "Random". Denotes the energy difference between levels of decomposition, which can either be uniformly 1, or a random number whose expected value is 1. *Default is "Uniform_1"*
 * ***rng:*** See section Reproducibility
 
 ### `create_species_pool()`
 
-This function generates a pool of species, a subset of which will be used for simulations later. The species pool consists of different families, whose members are functionally similar to each other. Family members will always posess the same set of reactions, with varied reaction rates. Each family has a "prior" or holotype, whose reaction rates are vectorized and used as the density parameter of a Dirichlet distribution. The reaction rates of family members are then sampled from this Dirichlet distribution. Families can either be specialist or generalist. Specialist families will have 2-3 reactions, while generalists will have 4-5. 
+This function generates a pool of species, a subset of which will be used for simulations later. The species pool consists of different families, whose members are functionally similar to each other. Family members will always possess the same set of reactions, with varied reaction rates. Each family has a "prior" or holotype, whose reaction rates are vectorized and used as the density parameter of a Dirichlet distribution. The reaction rates of family members are then sampled from this Dirichlet distribution. Families can either be specialist or generalist. Specialist families will have 2-3 reactions, while generalists will have 4-5. 
 
 Returning to our gut-microbiome scenario, we have introduced host regulation, the extent of which we assume to be identical in the members of the same family. We make the assumption that when the population of a microbial species reaches a certain size, the host will recognize this species as a potential threat, and start regulating its growth. Regulation is imposed according to the following equation:
 
 ![formula2](./images/host_regulation.png)
 
-where *G_i* is the growth rate of species *i* without host regulation, *a* controls the strength/speed of host regulation, *k* control the critical population size and *N_i* is the population size of species *i*.
+where *G_i* is the growth rate of species *i* without host regulation, *a* controls the strength/speed of host regulation, *k* controls the critical population size and *N_i* is the population size of species *i*.
 
 **Mandatory parameters**
 * ***D:*** Matrix that denotes the possible reactions to sample from. The stoichiometric matrix and the energy_yield matrix are equally suitable for this role. Any non-zero position in the matrix will be deemed possible.
@@ -83,9 +83,9 @@ where *G_i* is the growth rate of species *i* without host regulation, *a* contr
 **Output**
 
 Output is a single object of type ***pool_struct***. To access this type, use `MiCroSim.pool_struct()`. This structure will have the following fields:
-* ***pool:*** An array of size *n_resources x n_resources x (n_families x familiy_size)* which contains the matrices of all species inside the species pool
+* ***pool:*** An array of size *n_resources x n_resources x (n_families x family_size)* which contains the matrices of all species inside the species pool
 
-The rest of the fields are all attribute vectors of size *(n_families x familiy_size)*
+The rest of the fields are all attribute vectors of size *(n_families x family_size)*
 
 * ***family_ids:*** Denotes the family of each species.
 * ***m:*** Denotes the maintenance values of each species.
@@ -96,7 +96,7 @@ The rest of the fields are all attribute vectors of size *(n_families x familiy_
 
 ### `sample_pool()`
 
-This function randomly chooses some species matrices from a pool, and takes the corresponding subset of the attribute vectors in the *pool_struct*. It also assigns initial abundances (values between 0 and 1) for the species in the sample and all of the different resources.
+This function randomly chooses some species matrices from a pool and takes the corresponding subset of the attribute vectors in the *pool_struct*. It also assigns initial abundances (values between 0 and 1) for the species in the sample and all of the different resources.
 
 **Mandatory parameters**
 * ***p:*** A *pool_struct*
@@ -122,7 +122,7 @@ Output is a single object of type ***sample_struct***. To access this type, use 
 
 ### `generic_run()`
 
-This function takes a sample and solves a set of Ordinary Differential Equations (ODE-s) to simulate the community dynamics. Along with the sample there are several tradeoff-s and other parameters controlling the simulation, whose values can be set here. In order to better understand what these parameters do, let's look at the ODE-s:
+This function takes a sample and solves a set of Ordinary Differential Equations (ODEs) to simulate the community dynamics. Along with the sample there are several tradeoff-s and other parameters controlling the simulation, whose values can be set here. In order to better understand what these parameters do, let's look at the ODEs:
 
 Species dynamics is given by:
 
@@ -136,14 +136,14 @@ Resource dynamics is as follows:
 ![formula4](./images/resource_dynamics.png)
 
 <a id="resource"></a>
-where $K$ are the inflow rates, *tau* are the dilution rates, *D* is the stoichiometric matrix and the rest of the parameters are the same as above. The first term describes the inflow and depletion of resources from and into an outter environment, the second (negative) term describes consumption and the last (positive) term describes production.
+where $K$ are the inflow rates, *tau* are the dilution rates, *D* is the stoichiometric matrix and the rest of the parameters are the same as above. The first term describes the inflow and depletion of resources from and into an outer environment, the second (negative) term describes consumption and the last (positive) term describes production.
 
 **Mandatory parameters**
 * ***sample:*** A *sample_struct*
 
 **Recommended but optional parameters**
 * ***path:*** Specifies the output folder for the results of the simulation. *Default is `homedir()`*
-* ***t_span:*** Tuple(Int64, Int64) that specifies the starting and endig timepoints for the simulation. *Default is (0, 1000)*
+* ***t_span:*** Tuple(Int64, Int64) that specifies the starting and ending time points for the simulation. *Default is (0, 1000)*
 * ***D:*** Stoichiometric matrix. *Defaults to a random matrix generated by `create_metabolism()`*
 * ***W_ba:*** Energy yield matrix. *Defaults to a random matrix generated by `create_metabolism()`*
 
@@ -163,6 +163,27 @@ If either one of *D* or *W_ba* is missing, a warning is raised and both matrices
 **Output**
 Returns time series data in a SummarizedExperiment (SE) data container, which can be used for a variety of analyses. For details, see [MicrobiomeAnalysis.jl](https://github.com/JuliaTurkuDataScience/MicrobiomeAnalysis.jl)
 
-### 
+### Reproducibility
+
+The functions in this package (apart from `generic_run()`) are stochastic, and therefore can lead to different results at different times. To ensure reproducibility, the stochastic functions all have an "rng" parameter, where a random number generator can be plugged in.
+
+Example:
+```julia
+using Random
+my_rng = MersenneTwister(1234)
+D, W_ba = create_metabolism(rng=my_rng)
+```
+
+### Contribution
+
+The best way to contribute to this project is by curating universal metabolisms in the form of stoichiometric and energy yield matrices. Admittedly, the reaction systems that may arise from `create_metabolism()` are quite limited, but there is no reason why this model couldn't handle synthetic processes for example, where energy yields are allowed to be negative. Furthermore, pathway databases such as KEGG coupled with microbial whole genome data open the possibility for deriving net conversions from real-world experiments.
+
+### Funding
+
+**This project was funded by the Horizon 2020 funding programme**
+
+### Contact me
+
+For inquiries and bug reports, contact Jakab Máté: mate.jakab@ecolres.hu
 
 
