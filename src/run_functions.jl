@@ -14,10 +14,10 @@ function generic_run(sample::sample_struct;
     host_regulation::Bool=true)
 
     if isnothing(D)
-        D, W_ba = create_metabolism()
         if !isnothing(W_ba)
             println("WARNING: Supplied energy yield matrix (W_ba) but no stoichiometric matrix (D). Overwriting W_ba to ensure compatibility")
         end
+        D, W_ba = create_metabolism()
     else
         if isnothing(W_ba)
             D, W_ba = create_metabolism()
@@ -68,7 +68,6 @@ function generic_run(sample::sample_struct;
     );
     coldata = DataFrame(
         name = ["t$i" for i in 1:length(t)],
-        condition = rand(["lake", "ocean", "river"], length(t)), # just a placeholder
         time = 1:length(t)
     );
 
