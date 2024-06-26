@@ -1,4 +1,4 @@
-mutable struct param_struct
+mutable struct ParamStruct
     n_species::Int64
     n_resources::Int64
     present_species::Array{Int64}
@@ -19,7 +19,7 @@ mutable struct param_struct
 end
 
 
-struct pool_struct
+struct PoolStruct
     pool::Array{Float64, 3}
     family_ids::Array{Int64}
     m::Array{Float64}
@@ -31,7 +31,7 @@ struct pool_struct
 end
 
 
-struct sample_struct
+struct SampleStruct
     n_species::Int64
     n_invaders::Int64
     C::Array{Float64, 3}

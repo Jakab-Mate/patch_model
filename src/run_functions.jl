@@ -1,4 +1,4 @@
-function generic_run(sample::sample_struct;
+function generic_run(sample::SampleStruct;
     D = nothing,
     W_ba = nothing,
     path::String=homedir(),
@@ -51,7 +51,7 @@ function generic_run(sample::sample_struct;
     n_invaders = sample.n_invaders
 
     u0 = vcat(sample.species_abundance, sample.resource_abundance)
-    params = param_struct(n_species+n_invaders, n_resources, 1:n_species, sample.C, D, W_ba, sample.n_reactions, sample.n_splits, sample.m, phi, eta, tau, alpha, sample.a, sample.k, host_regulation)
+    params = ParamStruct(n_species+n_invaders, n_resources, 1:n_species, sample.C, D, W_ba, sample.n_reactions, sample.n_splits, sample.m, phi, eta, tau, alpha, sample.a, sample.k, host_regulation)
 
     prob = ODEProblem(equations, u0, t_span, params)
     cb = create_callbacks(t_inv, t_inv_0, n_invaders, n_species, cutoff)

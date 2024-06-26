@@ -90,7 +90,7 @@ where *G_i* is the growth rate of species *i* without host regulation, *a* contr
 
 **Output**
 
-Output is a single object of type ***pool_struct***. To access this type, use `MiCroSim.pool_struct()`. This structure will have the following fields:
+Output is a single object of type ***PoolStruct***. To access this type, use `MiCroSim.PoolStruct()`. This structure will have the following fields:
 * ***pool:*** An array of size *n_resources x n_resources x (n_families x family_size)* which contains the matrices of all species inside the species pool
 
 The rest of the fields are all attribute vectors of size *(n_families x family_size)*
@@ -104,10 +104,10 @@ The rest of the fields are all attribute vectors of size *(n_families x family_s
 
 ### `sample_pool()`
 
-This function randomly chooses some species matrices from a pool and takes the corresponding subset of the attribute vectors in the *pool_struct*. It also assigns initial abundances (values between 0 and 1) for the species in the sample and all of the different resources.
+This function randomly chooses some species matrices from a pool and takes the corresponding subset of the attribute vectors in the *PoolStruct*. It also assigns initial abundances (values between 0 and 1) for the species in the sample and all of the different resources.
 
 **Mandatory parameters**
-* ***p:*** A *pool_struct*
+* ***p:*** A *PoolStruct*
 * ***n_species:*** Number of species initially present in the community
 * ***n_invaders:*** Number of species that will appear successively in the community
 
@@ -115,7 +115,7 @@ This function randomly chooses some species matrices from a pool and takes the c
 * ***rng:*** See section Reproducibility
 
 **Output**
-Output is a single object of type ***sample_struct***. To access this type, use `MiCroSim.sample_struct()`. This structure will have the following fields:
+Output is a single object of type ***SampleStruct***. To access this type, use `MiCroSim.SampleStruct()`. This structure will have the following fields:
 * ***n_species:*** Feed forward parameter value
 * ***n_invaders:*** Feed forward parameter value
 * ***C:*** Sample of species matrices 
@@ -147,7 +147,7 @@ Resource dynamics is as follows:
 where $K$ are the inflow rates, *tau* are the dilution rates, *D* is the stoichiometric matrix and the rest of the parameters are the same as above. The first term describes the inflow and depletion of resources from and into an outer environment, the second (negative) term describes consumption and the last (positive) term describes production.
 
 **Mandatory parameters**
-* ***sample:*** A *sample_struct*
+* ***sample:*** A *SampleStruct*
 
 **Recommended but optional parameters**
 * ***path:*** Specifies the output folder for the results of the simulation. *Default is `homedir()`*
@@ -182,9 +182,18 @@ my_rng = MersenneTwister(1234)
 D, W_ba = create_metabolism(rng=my_rng)
 ```
 
-### Contribution
+### Design your own metabolism
 
 The best way to contribute to this project is by curating universal metabolisms in the form of stoichiometric and energy yield matrices. Admittedly, the reaction systems that may arise from `create_metabolism()` are limited, but more complex metabolic networks can also be implemented, for example modeling synthetic processes by setting energy yields negative (that is, a species invests into producing a metabolite). Furthermore, pathway databases such as KEGG coupled with microbial whole genome data open the possibility for deriving net conversions from real-world experiments.
+
+### Acknowledgements
+This project has benefited from contributions and insights of the following individuals and groups:
+
+* **István Scheuring** and **Gergely Boza** from the Centre for Ecological Research, Budapest, provided essential theoretical guidance for the model's development.
+
+* **Giulio Benedetti** and the [**TurkuDataScience**](https://datascience.utu.fi/) team form the University of Turku, Turku, were instrumental in setting up and optimizing the Julia package.
+
+* The model was inspired by the work of [Goldford et al. (2018)](10.1126/science.aat1168).
 
 ### Funding
 

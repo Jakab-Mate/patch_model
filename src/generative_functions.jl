@@ -120,6 +120,6 @@ function create_species_pool(D::Matrix; rng=nothing, n_families::Int64=5,
 
     end
 
-    return pool_struct(pool, family_ids, m, n_reactions, n_splits, a, k)
+    return PoolStruct(pool, family_ids, m, n_reactions, n_splits, a, k)
 
 end

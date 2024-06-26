@@ -28,7 +28,7 @@ function sample_pool(p, n_species::Int64=10, n_invaders::Int64=10; rng=nothing)
     species_initial_abundances = vcat(rand!(rng, zeros(n_species)), zeros(n_invaders))
     resource_initial_abundances = rand!(rng, zeros(n_resources))
 
-    return sample_struct(n_species, n_invaders, species_C_matrices, species_family_ids, species_m, species_n_reactions, species_n_splits, 
+    return SampleStruct(n_species, n_invaders, species_C_matrices, species_family_ids, species_m, species_n_reactions, species_n_splits, 
     species_initial_abundances, resource_initial_abundances, species_a, species_k)
 
 end
