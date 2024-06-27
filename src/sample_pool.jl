@@ -1,4 +1,4 @@
-function sample_pool(p, n_species::Int64=10, n_invaders::Int64=10; rng=nothing)
+function sample_pool(p, n_species::Int64=10, n_invaders::Int64=10; seed::Int64=1234)
     """
     Samples species from a species pool
 
@@ -8,7 +8,7 @@ function sample_pool(p, n_species::Int64=10, n_invaders::Int64=10; rng=nothing)
     - `n_invaders::Int64`: Number of invading species. Default is `10`.
 
     # Optional arguments
-    - `rng::Union{Nothing, AbstractRNG}`: Random number generator. Default is `nothing`.
+    - `seed::Int64`: Random number generator seed. Default is `1234`.
 
     # Output
     `SampleStruct` with the following fields:
@@ -24,9 +24,7 @@ function sample_pool(p, n_species::Int64=10, n_invaders::Int64=10; rng=nothing)
     - `a::Array{Float64}`: The strength of host control on the sampled species.
     - `k::Array{Float64}`: The critical abundance that triggers host control on the sampled species.
     """
-    if isnothing(rng)
-        rng = MersenneTwister()
-    end
+    rng = MersenneTwister(seed)
 
     n_resources = size(p.pool, 1)
     n_sampled = n_species + n_invaders

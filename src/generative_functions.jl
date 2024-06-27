@@ -1,4 +1,4 @@
-function create_metabolism(; n_resources::Int64=10, n_levels::Int64=5, energy_yields::String="Uniform_1", rng=nothing)
+function create_metabolism(; n_resources::Int64=10, n_levels::Int64=5, energy_yields::String="Uniform_1", seed::Int64=1234)
 
     """
     Generates a universal metabolism
@@ -7,14 +7,12 @@ function create_metabolism(; n_resources::Int64=10, n_levels::Int64=5, energy_yi
     - `n_resources::Int64`: Number of possible resources in the system. Default is `10`.
     - `n_levels::Int64`: Number of levels of decomposition in the system. Default is `5`.
     - `energy_yields::String`: The energy difference between two consecutive levels of decomposition. Default is `1` between all levels. Use "Random" to sample from a uniform distribution between 0 and 2 instead.
-    - `rng::Union{Nothing, AbstractRNG}`: Random number generator. Default is `nothing`.
+    - `rng::Int64`: Random number generator seed. Default is `1234`.
 
     # Output
     `Stoichiometric matrix, Energy yield matrix`
     """
-    if isnothing(rng)
-        rng = MersenneTwister()
-    end
+    rng = MersenneTwister(seed)
 
     if n_resources < n_levels
         throw(DomainError("Number of resources should be greater than or equal to the number of levels"))
@@ -54,10 +52,10 @@ function create_metabolism(; n_resources::Int64=10, n_levels::Int64=5, energy_yi
     return D, W_ba
 end
 
-function create_species_pool(D::Matrix; rng=nothing, n_families::Int64=5, 
+function create_species_pool(D::Matrix; n_families::Int64=5, 
     family_size::Int64=100, dirichlet_hyper::Real=100, between_family_var::Real=0.1, inside_family_var::Real=0.05, 
     h::Real=1, maintenance::Real=0.1, specialist::Real=1, generalist::Real=1, 
-    a_dist::Union{Distributions.Sampleable, Nothing}=nothing, k_dist::Union{Distributions.Sampleable, Nothing}=nothing)
+    a_dist::Union{Distributions.Sampleable, Nothing}=nothing, k_dist::Union{Distributions.Sampleable, Nothing}=nothing, seed::Int64=1234)
 
     """
     Create a pool of species by sampling reactions from a matrix denoting all possible reactions.
@@ -77,7 +75,7 @@ function create_species_pool(D::Matrix; rng=nothing, n_families::Int64=5,
     - `generalist::Real`: The generalist part of the odds ratio specialists:generalists in the pool. Default is `1`.
     - `a_dist::Union{Distributions.Sampleable, Nothing}`: Distribution to sample the strength of host control. Default is `Uniform(0.5, 1.5)`.
     - `k_dist::Union{Distributions.Sampleable, Nothing}`: Distribution to sample the critical abundance that triggers host control. Default is `Uniform(99.999, 100.001)`.
-    - `rng::Union{Nothing, AbstractRNG}`: Random number generator. Default is `nothing`.
+    - `rng::Int64`: Random number generator seed. Default is `1234`.
 
     # Output
     `PoolStruct` with the following fields:
@@ -90,8 +88,10 @@ function create_species_pool(D::Matrix; rng=nothing, n_families::Int64=5,
     - `k::Array{Float64}`: The critical abundance that triggers host control on the species
     """
 
-    if isnothing(rng)
-        rng = MersenneTwister()
+    if isnothing(seed)
+        rng = MersenneTwister(1234)
+    else
+        rng = MersenneTwister(seed)
     end
 
     n_resources::Int64 = length(D[:, 1])

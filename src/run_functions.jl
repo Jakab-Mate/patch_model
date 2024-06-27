@@ -71,6 +71,10 @@ function generic_run(sample::SampleStruct;
         alpha = vcat([100.0], zeros(Float64, n_resources-1))
     end
 
+    if length(tau) != n_resources || length(alpha) != n_resources
+        throw(DomainError("Length of dilution terms (tau) or resource availabilities (alpha) does not match the number of resources \n This can happen when tau or alpha is supplied, but the stoichiometric matrix and energy yield matrix are not. \n"))
+    end
+
     n_species = sample.n_species
     n_invaders = sample.n_invaders
 

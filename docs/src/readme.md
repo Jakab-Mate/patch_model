@@ -1,3 +1,7 @@
+```@meta
+EditURL = "https://github.com/Jakab-Mate/MiCroSim.jl/blob/main/README.md"
+```
+
 # Microbial Cross-feeding Community Simulator
 
 [![Build Status](https://github.com/Jakab-Mate/MiCroSim.jl/actions/workflows/CI.yml/badge.svg?branch=main)](https://github.com/Jakab-Mate/MiCroSim.jl/actions/workflows/CI.yml?query=branch%3Amain)
