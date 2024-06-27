@@ -2,7 +2,7 @@ module MiCroSim
 
 using Random: rand!, MersenneTwister
 using Dates: now
-using Plots: plot
+using Plots: plot, savefig
 using LinearAlgebra: norm
 using StatsBase: sample
 using MicrobiomeAnalysis
