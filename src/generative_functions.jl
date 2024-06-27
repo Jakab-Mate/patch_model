@@ -1,4 +1,17 @@
 function create_metabolism(; n_resources::Int64=10, n_levels::Int64=5, energy_yields::String="Uniform_1", rng=nothing)
+
+    """
+    Generates a universal metabolism
+
+    # Optional arguments
+    - `n_resources::Int64`: Number of possible resources in the system. Default is `10`.
+    - `n_levels::Int64`: Number of levels of decomposition in the system. Default is `5`.
+    - `energy_yields::String`: The energy difference between two consecutive levels of decomposition. Default is `1` between all levels. Use "Random" to sample from a uniform distribution between 0 and 2 instead.
+    - `rng::Union{Nothing, AbstractRNG}`: Random number generator. Default is `nothing`.
+
+    # Output
+    `Stoichiometric matrix, Energy yield matrix`
+    """
     if isnothing(rng)
         rng = MersenneTwister()
     end
@@ -45,6 +58,37 @@ function create_species_pool(D::Matrix; rng=nothing, n_families::Int64=5,
     family_size::Int64=100, dirichlet_hyper::Real=100, between_family_var::Real=0.1, inside_family_var::Real=0.05, 
     h::Real=1, maintenance::Real=0.1, specialist::Real=1, generalist::Real=1, 
     a_dist::Union{Distributions.Sampleable, Nothing}=nothing, k_dist::Union{Distributions.Sampleable, Nothing}=nothing)
+
+    """
+    Create a pool of species by sampling reactions from a matrix denoting all possible reactions.
+
+    # Mandatory arguments
+    - `D::Matrix`: Matrix denoting all possible reactions. A square matrix whose size should be equal to the number of possible resources in the system. All reactions will be deemed possible whose values are non-zero.
+
+    # Optional arguments
+    - `n_families::Int64`: Number of families (groups of functionally similar species) in the species pool. Default is `5`.
+    - `family_size::Int64`: Number of species in each family. Default is `100`.
+    - `dirichlet_hyper::Real`: Hyperparameter for the Dirichlet distribution that is used for creating the species inside the same family. The higher its value, the more similar they will be. Default is `100`.
+    - `maintenance::Real`: The expected cost of maintenance accross all species. Default is `0.1`.     
+    - `between_family_var::Real`: Variance of the normal distribution used to sample the maintenance values between families. Default is `0.1`.
+    - `inside_family_var::Real`: Variance of the normal distribution used to sample the maintenance values inside families. Default is `0.05`.
+    - `h::Real`: Controls the allocation of reaction rates inside species. Default is `1`.
+    - `specialist::Real`: The specialist part of the odds ratio specialists:generalists in the pool. Default is `1`.
+    - `generalist::Real`: The generalist part of the odds ratio specialists:generalists in the pool. Default is `1`.
+    - `a_dist::Union{Distributions.Sampleable, Nothing}`: Distribution to sample the strength of host control. Default is `Uniform(0.5, 1.5)`.
+    - `k_dist::Union{Distributions.Sampleable, Nothing}`: Distribution to sample the critical abundance that triggers host control. Default is `Uniform(99.999, 100.001)`.
+    - `rng::Union{Nothing, AbstractRNG}`: Random number generator. Default is `nothing`.
+
+    # Output
+    `PoolStruct` with the following fields:
+    - `pool::Array{Float64, 3}`: The matrices describing the metabolisms of the species inside the species pool.
+    - `family_ids::Array{Int64}`: The family IDs of species
+    - `m::Array{Float64}`: The maintenance costs of the species
+    - `n_reactions::Array{Int64}`: The number of reactions of the species
+    - `n_splits::Array{Float64}`: Reaction repertoire complexity metric of the species
+    - `a::Array{Float64}`: The strength of host control on the species
+    - `k::Array{Float64}`: The critical abundance that triggers host control on the species
+    """
 
     if isnothing(rng)
         rng = MersenneTwister()

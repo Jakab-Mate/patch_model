@@ -3,11 +3,11 @@ module MiCroSim
 using Random: rand!, MersenneTwister
 using Dates: now
 using Plots: plot
-using Distributions: Normal, Uniform
-using DifferentialEquations: solve, solve!, ODEProblem
 using LinearAlgebra: norm
 using StatsBase: sample
 using MicrobiomeAnalysis
+using Distributions
+using DifferentialEquations
 
 include("structs.jl")
 include("generative_functions.jl")

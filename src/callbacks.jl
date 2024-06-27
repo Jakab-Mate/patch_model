@@ -3,7 +3,7 @@ function affect!(integrator, t_inv, start_time, n_invaders, n_species, cutoff)
     if integrator.t >= start_time
         idx = Int(n_species + floor((integrator.t - start_time) / t_inv)) + 1
         if idx <= n_invaders + n_species
-            println(idx)
+            println("invader ", idx-n_species, " added at time ", integrator.t)
             integrator.u[idx] += 10
         end
     end

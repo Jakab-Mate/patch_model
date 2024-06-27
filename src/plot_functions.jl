@@ -32,7 +32,7 @@ function plot_MCI(se::SummarizedExperiment, assay_name::String, path::String)
     plotter = hcat(react_accumulator, react_accumulator ./ present_accumulator)
     labels = reshape(arr_names, (1, 2))
 
-    p = Plots.plot(se.coldata.time, plotter,
+    p = plot(se.coldata.time, plotter,
         label = labels, legend_position = :outerleft, xaxis = "Time", yaxis = "MCI")
     savefig(p, joinpath(path, "MCI.png"))
     println("plot was saved at $path")
@@ -41,7 +41,7 @@ end
 function plot_se(se::SummarizedExperiment, assay_name::String, path::String)
     labels = reshape(se.rowdata.name, (1, length(se.rowdata.name)))
 
-    p = Plots.plot(se.coldata.time, Number.(assay(se, assay_name))',
+    p = plot(se.coldata.time, Number.(assay(se, assay_name))',
         label = labels, legend_position = :outerleft, xaxis = "Time", yaxis = "Abundance")
 
     savefig(p, joinpath(path, "strain_abundances.png"))
@@ -50,7 +50,7 @@ function plot_se(se::SummarizedExperiment, assay_name::String, path::String)
         aggreg_data = aggregate_by_rowdata(se, attr, assay_name)
         aggreg_array = collect(keys(aggreg_data))
         labels = reshape(aggreg_array, (1, length(aggreg_array)))
-        p = Plots.plot(se.coldata.time, [x for x in values(aggreg_data)],
+        p = plot(se.coldata.time, [x for x in values(aggreg_data)],
             label = labels, legend_position = :outerleft, xaxis = "Time", yaxis = "Abundance")
         savefig(p, joinpath(path, "$attr _abundances.png"))
     end
