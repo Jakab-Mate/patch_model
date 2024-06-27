@@ -53,13 +53,15 @@ jobs:
         env:
           CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
   compathelper:
-      name: CompatHelper
-      runs-on: ubuntu-latest
-      steps:
-        - uses: actions/checkout@v4
-        - uses: julia-actions/setup-julia@v1
-          with:
-            version: '1.6'
-        - run: julia -e 'using Pkg; Pkg.add("CompatHelper"); using CompatHelper; CompatHelper.main()'
-          env:
-            GITHUB_TOKEN: ${{ secrets.CH_TOKEN }}
+    name: CompatHelper
+    runs-on: ubuntu-latest
+    on:
+      workflow_dispatch:
+    steps:
+      - uses: actions/checkout@v4
+      - uses: julia-actions/setup-julia@v1
+        with:
+          version: '1.6'
+      - run: julia -e 'using Pkg; Pkg.add("CompatHelper"); using CompatHelper; CompatHelper.main()'
+        env:
+          GITHUB_TOKEN: ${{ secrets.CH_TOKEN }}
