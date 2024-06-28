@@ -1,29 +1,32 @@
-function sample_pool(p, n_species::Int64=10, n_invaders::Int64=10; seed::Int64=1234)
-    """
-    Samples species from a species pool
+"""
+    sample_pool(p::PoolStruct, n_species::Int64, n_invaders::Int64; seed::Int64=1234)
 
-    # Mandatory arguments
-    - `p::PoolStruct`: A pool struct containing the pool of species.
-    - `n_species::Int64`: Number of species initially present in the habitat. Default is `10`.
-    - `n_invaders::Int64`: Number of invading species. Default is `10`.
+Samples species from a species pool
 
-    # Optional arguments
-    - `seed::Int64`: Random number generator seed. Default is `1234`.
+# Mandatory arguments
+- `p::PoolStruct`: A pool struct containing the pool of species.
+- `n_species::Int64`: Number of species initially present in the habitat.
+- `n_invaders::Int64`: Number of invading species.
 
-    # Output
-    `SampleStruct` with the following fields:
-    - `n_species::Int64`: Number of species initially present in the habitat.
-    - `n_invaders::Int64`: Number of invading species.
-    - `C::Array{Float64, 3}`: The matrices describing the metabolism of the sampled species.
-    - `family_ids::Array{Int64}`: The family IDs of the sampled species.
-    - `m::Array{Float64}`: The maintenance costs of the sampled species.
-    - `n_reactions::Array{Int64}`: The number of reactions of the sampled species.
-    - `n_splits::Array{Float64}`: Reaction repertoire complexity metric of the sampled species.
-    - `species_abundance::Array{Float64}`: The initial abundances of the sampled species.
-    - `resource_abundance::Array{Float64}`: The initial abundances of resources.
-    - `a::Array{Float64}`: The strength of host control on the sampled species.
-    - `k::Array{Float64}`: The critical abundance that triggers host control on the sampled species.
-    """
+# Optional arguments
+- `seed::Int64`: Random number generator seed. Default is `1234`.
+
+# Output
+`SampleStruct` with the following fields:
+- `n_species::Int64`: Number of species initially present in the habitat.
+- `n_invaders::Int64`: Number of invading species.
+- `C::Array{Float64, 3}`: The matrices describing the metabolism of the sampled species.
+- `family_ids::Array{Int64}`: The family IDs of the sampled species.
+- `m::Array{Float64}`: The maintenance costs of the sampled species.
+- `n_reactions::Array{Int64}`: The number of reactions of the sampled species.
+- `n_splits::Array{Float64}`: Reaction repertoire complexity metric of the sampled species.
+- `species_abundance::Array{Float64}`: The initial abundances of the sampled species.
+- `resource_abundance::Array{Float64}`: The initial abundances of resources.
+- `a::Array{Float64}`: The strength of host control on the sampled species.
+- `k::Array{Float64}`: The critical abundance that triggers host control on the sampled species.
+"""
+
+function sample_pool(p::PoolStruct, n_species::Int64, n_invaders::Int64; seed::Int64=1234)
     rng = MersenneTwister(seed)
 
     n_resources = size(p.pool, 1)
