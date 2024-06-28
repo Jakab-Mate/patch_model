@@ -22,7 +22,7 @@ open(joinpath(generated_path, "readme.md"), "w") do io
 end
 
 makedocs(
-    format = Documenter.HTML(),
+    format = Documenter.HTML(inventory_version = "0.1"),
     authors = "Jakab Máté",
     sitename = "MiCroSim.jl",
     modules = [MiCroSim],
