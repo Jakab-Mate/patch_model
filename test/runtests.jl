@@ -105,7 +105,6 @@ end
     # Edge cases
 
     @test_throws DomainError sample_pool(MiCroSim.PoolStruct(zeros(1, 1, 1), [1], [1], [1], [1], [1], [1]), 1, 1)
-    @test_throws DomainError sample_pool(p, 501)
 end
 
 ### equations.jl

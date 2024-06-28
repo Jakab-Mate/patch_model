@@ -21,6 +21,10 @@ jobs:
         with:
           version: '1.7'
 
+      - name: Clone MiCroSim repository
+        run: |
+          git clone https://github.com/Jakab-Mate/MiCroSim.jl.git .
+
       - name: Build package
         run: |
           julia --project=docs -e '
