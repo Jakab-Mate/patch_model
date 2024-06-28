@@ -277,7 +277,7 @@ This project has benefited from contributions and insights of the following indi
 
 * **István Scheuring** and **Gergely Boza** from the Centre for Ecological Research, Budapest, provided essential theoretical guidance for the model's development.
 
-* **Giulio Benedetti** and the [**TurkuDataScience**](https://datascience.utu.fi/) team form the University of Turku, Turku, were instrumental in setting up and optimizing the Julia package.
+* **Leo Lahti**, **Giulio Benedetti** and the rest of the [**TurkuDataScience**](https://datascience.utu.fi/) team form the University of Turku, Turku, were instrumental in setting up and optimizing the Julia package.
 
 * The model was inspired by the work of [Goldford et al. (2018)](https://doi.org/10.1126/science.aat1168).
 
