@@ -7,16 +7,15 @@ generated_path = joinpath(@__DIR__, "src")
 base_url = "https://github.com/Jakab-Mate/MiCroSim.jl/blob/main/"
 isdir(generated_path) || mkdir(generated_path)
 
+readme_path = joinpath(@__DIR__, "../../main_repo/README.md")
+
 open(joinpath(generated_path, "readme.md"), "w") do io
-    println(
-        io,
-        """
-        ```@meta
-        EditURL = "$(base_url)README.md"
-        ```
-        """,
-    )
-    for line in eachline("README.md")
+    println(io, """
+    ```@meta
+    EditURL = "$(base_url)README.md"
+    ```
+    """)
+    for line in eachline(readme_path)
         println(io, line)
     end
 end
