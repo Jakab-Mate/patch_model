@@ -1150,7 +1150,7 @@ version = "0.3.2"
 
 [[deps.MiCroSim]]
 deps = ["Dates", "DifferentialEquations", "Distributions", "LinearAlgebra", "MicrobiomeAnalysis", "Plots", "Random", "StatsBase"]
-git-tree-sha1 = "e5686166804350f308d6c5f5a1844077f8d3c715"
+git-tree-sha1 = "ae429e1995affdc13b7e6878b1561386aa022da4"
 repo-rev = "main"
 repo-url = "/home/jakab/.julia/dev/TestPkg"
 uuid = "6d88d2e0-0690-4b4f-abd5-e8c1ddbe3cc5"
