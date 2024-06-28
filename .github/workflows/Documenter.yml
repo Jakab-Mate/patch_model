@@ -10,6 +10,7 @@ jobs:
   docs:
     name: Documentation
     runs-on: ubuntu-latest
+
     steps:
       - name: Check out main branch
         uses: actions/checkout@v2
@@ -27,14 +28,11 @@ jobs:
         with:
           version: '1.7'
 
-      - name: Build package
-        run: |
-          julia --project=gh_pages_repo/docs -e '
-            import Pkg
-            Pkg.add("Documenter")
-            using Pkg
-            Pkg.develop(PackageSpec(path=joinpath(pwd(), "main_repo")))
-            Pkg.instantiate()'
+      - name: Activate docs project
+        run: julia --project=gh_pages_repo/docs -e 'using Pkg; Pkg.activate(); Pkg.instantiate()'
+
+      - name: Develop package
+        run: julia --project=gh_pages_repo/docs -e 'using Pkg; Pkg.develop(PackageSpec(path=joinpath(pwd(), "main_repo"))); Pkg.instantiate()'
 
       - name: Generate and Deploy documentation
         run: julia --project=gh_pages_repo/docs --color=yes gh_pages_repo/docs/make.jl
