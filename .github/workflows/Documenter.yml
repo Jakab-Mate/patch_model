@@ -11,8 +11,10 @@ jobs:
     name: Documentation
     runs-on: ubuntu-latest
     steps:
-      - name: Check out
+      - name: Check out gh-pages branch
         uses: actions/checkout@v2
+        with:
+          ref: gh-pages
 
       - name: Set up Julia
         uses: julia-actions/setup-julia@v1

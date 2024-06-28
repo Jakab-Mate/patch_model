@@ -84,9 +84,6 @@ end
         @test p.a[i] >= 0
         @test p.k[i] >= 0
     end
-
-    # Edge cases
-    @test_throws DomainError create_species_pool(zeros(1, 1)
 end
 
 ### sample_pool.jl
