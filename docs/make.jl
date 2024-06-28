@@ -34,7 +34,7 @@ makedocs(
             "Tutorial 2" => "example2.md"
         ]
     ],
-    remotes = Dict("/home/jakab/.julia/dev/TestPkg" => Remotes.GitHub("Jakab-Mate", "MiCroSim.jl"))
+    remotes = Dict(joinpath(pwd(), "main_repo") => Documenter.Remotes.GitHub("Jakab-Mate", "MiCroSim.jl"))
 )
 
 deploydocs(repo = "github.com/Jakab-Mate/MiCroSim.jl", push_preview = true)
