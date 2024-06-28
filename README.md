@@ -116,7 +116,7 @@ Output is a single object of type ***SampleStruct***. To access this type, use `
 * ***a:*** Corresponding host regulation speed
 * ***k:*** Corresponding critical population size
 * ***species_abundance:*** Initial abundances for each of the sampled species
-* ***resource_abundance:*** Initial abundances for each resource in the system
+* ***resource_abundance:*** Initial abundances for each resource
 
 ### `generic_run()`
 
