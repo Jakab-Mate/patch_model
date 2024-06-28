@@ -11,30 +11,33 @@ jobs:
     name: Documentation
     runs-on: ubuntu-latest
     steps:
+      - name: Check out main branch
+        uses: actions/checkout@v2
+        with:
+          path: main_repo
+
       - name: Check out gh-pages branch
         uses: actions/checkout@v2
         with:
           ref: gh-pages
+          path: gh_pages_repo
 
       - name: Set up Julia
         uses: julia-actions/setup-julia@v1
         with:
           version: '1.7'
 
-      - name: Clone MiCroSim repository
-        run: |
-          git clone https://github.com/Jakab-Mate/MiCroSim.jl.git /home/jakab/.julia/dev/MiCroSim
-
       - name: Build package
         run: |
-          julia --project=docs -e '
-            import Pkg; Pkg.add("Documenter")
+          julia --project=gh_pages_repo/docs -e '
+            import Pkg
+            Pkg.add("Documenter")
             using Pkg
-            Pkg.develop(PackageSpec(path=pwd()))
+            Pkg.develop(PackageSpec(path=joinpath(pwd(), "main_repo")))
             Pkg.instantiate()'
 
-      - name: Deploy documentation
-        run: julia --project=docs docs/make.jl
+      - name: Generate and Deploy documentation
+        run: julia --project=gh_pages_repo/docs --color=yes gh_pages_repo/docs/make.jl
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           DOCUMENTER_KEY: ${{ secrets.DOCUMENTER_KEY }}
