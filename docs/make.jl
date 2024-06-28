@@ -18,6 +18,7 @@ open(joinpath(generated_path, "readme.md"), "w") do io
     for line in eachline(readme_path)
         println(io, line)
     end
+end
 
 makedocs(
     format = Documenter.HTML(inventory_version = "0.1"),
