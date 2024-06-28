@@ -6,7 +6,7 @@
 
 This project offers a quick and easy method for simulating microbial community dynamics based solely on their metabolic interactions. The model represents distinct microbial species as matrices that describe their net conversion rates in the form *A -> nB*, where *A* is the metabolite consumed, *B* is the metabolite excreted into a shared environment, and *n* is a stoichiometric constant. Additionally, the species housing the above net conversion (or reaction), will have generated some value (energy) during the process, which contributes to its own growth. Once excreted, metabolite *B* may be utilized by a different species, enabling cross-feeding (syntrophy) between the populations present in the community. The model incorporates a feeding term that describes the type and amount of resources that flow into the system per unit time. All observed growth in the community can be derived from this inflow of resources: some species will be able to directly consume the resources flowing into the habitat (as a renewable or depletable resource), while the preferred resources for other species will be the byproducts of the reaction(s) performed by different species.
 
-### Applicability
+## Applicability
 
 * **Simulate the growth of an initially populated microbial community and find the equilibrium abundances**
 
@@ -14,7 +14,7 @@ This project offers a quick and easy method for simulating microbial community d
 
 * **Simulate the resilience of a microbial community against invaders appearing one by one**
 
-### Installation
+## Installation
 To install MiCroSim.jl directly from the github repository, use:
 
 ```julia
@@ -22,7 +22,7 @@ using Pkg
 Pkg.add(url="https://github.com/Jakab-Mate/MiCroSim.jl.git")
 ```
 
-### Workflow
+## Workflow
 The functions in this package rely on each other's outputs, so generally you will want to use them in the following order:
 1. **create_metabolism(...)**<span style="display:inline-block; width: 56px;"></span>Generates the set of possible reactions (net conversions)
 
@@ -34,6 +34,7 @@ The functions in this package rely on each other's outputs, so generally you wil
 
 Detailed instructions for using each function can be found in their dedicated sections.
 
+## Functions
 ### `create_metabolism()`
 
 This function generates the set of all possible reactions, or in other words a universal metabolism. Each reaction is characterized by 4 attributes:
@@ -161,7 +162,7 @@ If either one of *D* or *W_ba* is missing, a warning is raised and both matrices
 **Output**
 Returns time series data in a SummarizedExperiment (SE) data container, which can be used for a variety of analyses. For details, see [MicrobiomeAnalysis.jl](https://github.com/JuliaTurkuDataScience/MicrobiomeAnalysis.jl)
 
-### Reproducibility
+## Reproducibility
 
 The functions in this package (apart from `generic_run()`) are stochastic, and therefore can lead to different results at different times. To ensure reproducibility, the stochastic functions all have a "seed" parameter, which can be used to initialize a specific instance of a random number generator which arrives at the same results every time.
 
@@ -172,11 +173,106 @@ my_seed = 1234
 D, W_ba = create_metabolism(seed=my_seed)
 ```
 
-### Design your own metabolism
+## Examples
+
+### Find equilibrium community composition of initially populated community
+
+```julia
+using MiCroSim
+
+n_resources = 12 # set the number of resources
+
+# create universal metabolism of a 12 resource system
+D, W_ba = create_metabolism(n_resources=n_resources)
+
+# generate a pool of 5 families, each with 10 members
+pool = create_species_pool(D, n_families=5, family_size=10)
+
+# sample 25 initially present species from the pool
+sample = sample_pool(pool, 25,  0)
+
+# simulate dynamics with host regulation turned off
+out = generic_run(sample, D=D, W_ba=W_ba, phi=0.0, t_span=(0, 200), host_regulation=false, path="full/path/to/output/folder/")
+
+# since plot is set to true by default, you will find some figures illustrating your simulation results is your specified directory
+```
+
+Since there is no host regulation, and only a single summplied resource (default), only the species with the most favorable metabolic profile survives, as illustrated on the plot below:
+
+![img1](./images/example1.png)
+
+
+With host regulation enabled, multiple species can survive:
+
+![img2](./images/example1_2.png)
+
+Although in this case, we might want to midify t_span becasue it takes longer to reach the equilibrium state
+
+### Introducing colonizers into an initially empty habitat
+
+```julia
+using MiCroSim
+
+n_resources = 15
+# let's supply multiple resources extrenally this time
+supplied_resources = 3
+
+# create vector of resource availabilities
+alpha = vcat(fill(100.0, supplied_resources), fill(0.0, n_resources - supplied_resources))
+
+D, W_ba = create_metabolism(n_resources=n_resources)
+pool = create_species_pool(D)
+
+# start from an empty community, and add 50 species one by one
+sample = sample_pool(pool, 0,  40)
+
+# simulate dynamics using the given resource availability
+out = generic_run(sample, D=D, W_ba=W_ba, alpha=alpha, host_regulation=false, t_span=(0, 1200))
+
+#figures will now appear in homedir, since we didn't specify a path
+```
+
+The resulting species dynamics is illustrated below:
+
+![img3](./images/example2_abu.png)
+
+Above the changes in abundance, we also track some valueable information about the species present in the network such as number of reactions or complexity of reaction repertoires. This is enabled by the rowdata fields of the SummarizedExperiment output object, which is used to automatically create plots.
+
+For example, the figure below shows the Metabolic Capacity Index representative of the community as the colonization progresses. This is calculated from the number of reactions that each species houses. These measures could be useful for relating the simulation results to real world experiments such as that of [Marcos et al. (2023)](https://www.researchsquare.com/article/rs-2885808/v1).
+
+![img4](./images/example2_MCI.png)
+
+### Check the robustness of an equilibrium state community against invaders
+
+```julia
+using MiCroSim
+
+n_resources = 16
+supplied_resources = 2
+alpha = vcat(fill(100.0, supplied_resources), fill(0.0, n_resources - supplied_resources))
+
+# Create a metabolism with 8 levels of decomposition
+n_levels = 8 
+D, W_ba = create_metabolism(n_resources=n_resources, n_levels=n_levels)
+
+pool = create_species_pool(D, n_families=10, family_size=20)
+
+# Start from a populated community, and add 80 invading species
+sample = sample_pool(pool, 20,  80)
+
+# Simulate dynamics of initial community until t=1000 and then start adding invaders 
+out = generic_run(sample, D=D, W_ba=W_ba, alpha=alpha, t_inv=25.0, t_inv_0=1000.0, t_span=(0, 4000), host_regulation=false)
+```
+
+The fruitless efforts of invading species are best illustrated on the MCI plot. When invasion events stop, the community returns to the initial equilibrium state.
+
+![img5](./images/example3_MCI.png)
+
+## Design your own metabolism
 
 The best way to contribute to this project is by curating universal metabolisms in the form of stoichiometric and energy yield matrices. Admittedly, the reaction systems that may arise from `create_metabolism()` are limited, but more complex metabolic networks can also be implemented, for example modeling synthetic processes by setting energy yields negative (that is, a species invests into producing a metabolite). Furthermore, pathway databases such as KEGG coupled with microbial whole genome data open the possibility for deriving net conversions from real-world experiments.
 
-### Acknowledgements
+## Acknowledgements
 This project has benefited from contributions and insights of the following individuals and groups:
 
 * **István Scheuring** and **Gergely Boza** from the Centre for Ecological Research, Budapest, provided essential theoretical guidance for the model's development.
@@ -185,11 +281,11 @@ This project has benefited from contributions and insights of the following indi
 
 * The model was inspired by the work of [Goldford et al. (2018)](https://doi.org/10.1126/science.aat1168).
 
-### Funding
+## Funding
 
 **This project received funding from the European Union’s Horizon 2020 research and innovation programme (under grant agreement 952914; FindingPheno).**
 
-### Contact me
+## Contact me
 
 For inquiries and bug reports, contact Jakab Máté: mate.jakab@ecolres.hu
 
