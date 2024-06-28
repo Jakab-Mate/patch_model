@@ -45,10 +45,6 @@ To simulate a gut-microbiome scenario, where most reactions are catabolic, `crea
 * Resources can be grouped into different levels of decomposition, based on their energy content
 * Reactions will always yield some energy, meaning that the resource produced will always be of a lower level (more decomposed) than the resource consumed
 
-**Mandatory parameters**
-
-This function has no mandatory parameters.
-
 **Optional parameters**
 * ***n_resources:*** The number of different resources in the network, which determines the size of the output matrices. *Default value is 10*
 * ***n_levels:*** The number of levels of decomposition. Must be smaller or equal to *n_resources*, because each level will have at least one resource belonging to it. The lowest and the highest levels can only have one resource, and thus, the remaining resources will be of intermediate levels. *Default value is 5*
