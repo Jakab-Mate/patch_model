@@ -1,4 +1,4 @@
-## Find equilibrium community composition of initially populated community
+### Find equilibrium community composition of initially populated community
 
 ```julia
 using MiCroSim

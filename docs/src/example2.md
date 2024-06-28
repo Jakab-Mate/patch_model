@@ -1,4 +1,4 @@
-## Introducing colonizers into an initially empty habitat
+### Introducing colonizers into an initially empty habitat
 
 ```julia
 using MiCroSim

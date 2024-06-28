@@ -1,4 +1,4 @@
-## Check the robustness of an equilibrium state community against invaders
+### Check the robustness of an equilibrium state community against invaders
 
 ```julia
 using MiCroSim

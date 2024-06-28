@@ -29,8 +29,9 @@ makedocs(
         "Home" => "readme.md",
         "Manual" => "index.md",
         "Tutorials" => Any[
-            "Tutorial 1" => "example1.md",
-            "Tutorial 2" => "example2.md"
+            "Initially populated community" => "example1.md",
+            "Initially empty community" => "example2.md",
+            "Populated + invaders" => "example3.md"
         ]
     ],
     remotes = Dict(joinpath(pwd(), "main_repo") => Documenter.Remotes.GitHub("Jakab-Mate", "MiCroSim.jl"))
