@@ -41,12 +41,6 @@ the metabolite that is being consumed, the metabolite that is being produced, th
 
 `create_metabolism()` outputs two matrices that hold the stoichiometric constants and the energy gains respectively. Each of these matrices is of size *RxR*, where *R* is the number of different resources, and each entry inside them corresponds to a specific reaction, where the column index indicates the resource being consumed, and the row index indicates the resource being produced. Importantly, the positions of zeros in these two matrices must align, and those reactions will not be possible.
 
-To ensure energy conservation, we use the following equation to calculate the energy yields for each reaction:
-
-![formula](./images/energy_conservation.png)
-
-where *w_a* and *w_b* denote the energy content of the resources and *D_ba* is the stoichiometric constant.
-
 To simulate a gut-microbiome scenario, where most reactions are catabolic, `create_metabolism()` operates under the following assumptions:
 * Resources can be grouped into different levels of decomposition, based on their energy content
 * Reactions will always yield some energy, meaning that the resource produced will always be of a lower level (more decomposed) than the resource consumed
