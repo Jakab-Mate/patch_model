@@ -18,7 +18,6 @@ open(joinpath(generated_path, "readme.md"), "w") do io
     for line in eachline(readme_path)
         println(io, line)
     end
-end
 
 makedocs(
     format = Documenter.HTML(inventory_version = "0.1"),
@@ -36,4 +35,9 @@ makedocs(
     remotes = Dict(joinpath(pwd(), "main_repo") => Documenter.Remotes.GitHub("Jakab-Mate", "MiCroSim.jl"))
 )
 
-deploydocs(repo = "github.com/Jakab-Mate/MiCroSim.jl", push_preview = true)
+deploydocs(
+    repo = "github.com/Jakab-Mate/MiCroSim.jl",
+    branch = "gh-pages",
+    devbranch = "main",
+    target = "build"
+)
