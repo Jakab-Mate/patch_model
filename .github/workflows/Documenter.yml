@@ -23,14 +23,14 @@ jobs:
 
       - name: Clone MiCroSim repository
         run: |
-          git clone https://github.com/Jakab-Mate/MiCroSim.jl.git .
+          git clone https://github.com/Jakab-Mate/MiCroSim.jl.git /home/runner/work/MiCroSim.jl/MiCroSim.jl
 
       - name: Build package
         run: |
           julia --project=docs -e '
             import Pkg; Pkg.add("Documenter")
             using Pkg
-            Pkg.develop(PackageSpec(path=pwd()))
+            Pkg.develop(PackageSpec(path=path="/home/runner/work/MiCroSim.jl/MiCroSim.jl"))
             Pkg.instantiate()'
 
       - name: Deploy documentation
