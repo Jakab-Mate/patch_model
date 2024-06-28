@@ -25,7 +25,6 @@ Samples species from a species pool
 - `a::Array{Float64}`: The strength of host control on the sampled species.
 - `k::Array{Float64}`: The critical abundance that triggers host control on the sampled species.
 """
-
 function sample_pool(p::PoolStruct, n_species::Int64, n_invaders::Int64; seed::Int64=1234)
     rng = MersenneTwister(seed)
 

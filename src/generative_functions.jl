@@ -12,7 +12,6 @@ Generates a universal metabolism
 # Output
 `Stoichiometric matrix, Energy yield matrix`
 """
-
 function create_metabolism(; n_resources::Int64=10, n_levels::Int64=5, energy_yields::String="Uniform_1", seed::Int64=1234)
     rng = MersenneTwister(seed)
 
@@ -86,7 +85,6 @@ Create a pool of species by sampling reactions from a matrix denoting all possib
 - `a::Array{Float64}`: The strength of host control on the species
 - `k::Array{Float64}`: The critical abundance that triggers host control on the species
 """
-
 function create_species_pool(D::Matrix; n_families::Int64=5, 
     family_size::Int64=100, dirichlet_hyper::Real=100, between_family_var::Real=0.1, inside_family_var::Real=0.05, 
     h::Real=1, maintenance::Real=0.1, specialist::Real=1, generalist::Real=1, 

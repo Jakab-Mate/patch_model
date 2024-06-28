@@ -23,7 +23,6 @@ Run the model with the given parameters and sample by solving a set of ODEs usin
 - `plot::Bool`: Whether to generate plots of the simulation. Default is `true`.
 - `host_regulation::Bool`: Whether to include host regulation in the model. Default is `true`.
 """
-
 function generic_run(sample::SampleStruct;
     D = nothing,
     W_ba = nothing,
