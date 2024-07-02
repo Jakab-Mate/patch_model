@@ -35,6 +35,9 @@ Run the model with the given parameters and sample by solving a set of ODEs usin
 - `alpha::Union{Vector{Float64}, Nothing}`: The availability of resources in the outer environment. Default is `100.0` for the first resource and 0.0 for the rest.
 - `plot::Bool`: Whether to generate plots of the simulation. Default is `true`.
 - `host_regulation::Bool`: Whether to include host regulation in the model. Default is `true`.
+
+# Output
+Returns time series data in a SummarizedExperiment (SE) data container, which can be used for a variety of analyses. For details, see [MicrobiomeAnalysis.jl](https://github.com/JuliaTurkuDataScience/MicrobiomeAnalysis.jl)
 """
 function generic_run(sample::SampleStruct;
     D = nothing,
