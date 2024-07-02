@@ -9,16 +9,16 @@ isdir(generated_path) || mkdir(generated_path)
 
 readme_path = joinpath(@__DIR__, "../../main_repo/README.md")
 
-open(joinpath(generated_path, "readme.md"), "w") do io
-    println(io, """
-    ```@meta
-    EditURL = "$(base_url)README.md"
-    ```
-    """)
-    for line in eachline(readme_path)
-        println(io, line)
-    end
-end
+# open(joinpath(generated_path, "readme.md"), "w") do io
+#     println(io, """
+#     ```@meta
+#     EditURL = "$(base_url)README.md"
+#     ```
+#     """)
+#     for line in eachline(readme_path)
+#         println(io, line)
+#     end
+# end
 
 makedocs(
     format = Documenter.HTML(inventory_version = "0.1"),
