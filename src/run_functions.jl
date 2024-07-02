@@ -1,5 +1,18 @@
 """
-    generic_run(sample::SampleStruct; D=nothing, W_ba=nothing, path=homedir(), t_span=(0, 1000), t_inv=25.0, t_inv_0=100.0, cutoff=0.0001, phi=0.1, eta=0.1, tau=nothing, alpha=nothing, plot=true, host_regulation=true)
+    generic_run(sample::SampleStruct;
+     D=nothing,
+     W_ba=nothing,
+     path=homedir(),
+     t_span=(0, 1000),
+     t_inv=25.0,
+     t_inv_0=100.0,
+     cutoff=0.0001,
+     phi=0.1,
+     eta=0.1,
+     tau=nothing,
+     alpha=nothing,
+     plot=true,
+     host_regulation=true)
 
 Run the model with the given parameters and sample by solving a set of ODEs using the KenCarp4 solver.
 
