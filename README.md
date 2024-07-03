@@ -4,7 +4,7 @@
 
 ## A general-purpose microbial consumer-resource model that outputs simulated data in the SummarizedExperiment (SE) format.
 
-This project offers a quick and easy method for simulating microbial community dynamics based solely on their metabolic interactions. The model uses matrix representations for species, which encode the metabolites a species can consume, and also the ones it can produce. 
+This project offers a quick and easy method for simulating microbial community dynamics based solely on their metabolic interactions. The model uses matrix representations for species, which encode the metabolites a species can consume, and also the ones it can produce. Community dynamics are simulated using a set of Ordinary Differential Equations (ODEs), and the produced time-series data is stored in a SummarizedExperiment data container.
 
 **Please refer to the [project website](https://jakab-mate.github.io/MiCroSim.jl/dev/readme/) for a more detailed documentation**
 
