@@ -37,10 +37,9 @@ end
 
 ### generative_functions.jl
 @testset "Testing create_metabolism" begin
-    rng = MersenneTwister(1234)
     n_levels = 5
     n_resources = 10
-    D, W_ba = create_metabolism(n_resources=n_resources, n_levels=n_levels, energy_yields="Uniform_1", rng=rng)
+    D, W_ba = create_metabolism(n_resources=n_resources, n_levels=n_levels, energy_yields="Uniform_1")
     @test size(D) == (10, 10)
     @test size(W_ba) == (10, 10)
     @test length(D[:,1]) == n_resources
@@ -61,14 +60,13 @@ end
     end
 
     # Edge cases
-    @test_throws DomainError create_metabolism(n_resources=1, n_levels=1, rng=rng)
-    @test_throws DomainError create_metabolism(n_resources=5, n_levels=10, rng=rng)
+    @test_throws DomainError create_metabolism(n_resources=1, n_levels=1)
+    @test_throws DomainError create_metabolism(n_resources=5, n_levels=10)
 end
 
 @testset "Testing create_species_pool" begin
-    rng = MersenneTwister(1234)
-    D, W_ba = create_metabolism(rng=rng)
-    p = create_species_pool(D, n_families=5, family_size=100, rng=rng)
+    D, W_ba = create_metabolism()
+    p = create_species_pool(D, n_families=5, family_size=100)
     @test size(p.pool) == (10, 10, 500)
     @test size(p.family_ids) == (500,)
     @test size(p.m) == (500,)
@@ -86,17 +84,13 @@ end
         @test p.a[i] >= 0
         @test p.k[i] >= 0
     end
-
-    # Edge cases
-    @test_throws DomainError create_species_pool(zeros(1, 1), rng=rng)
 end
 
 ### sample_pool.jl
 @testset "Testing sample_pool" begin
-    rng = MersenneTwister(1234)
-    D, W_ba = create_metabolism(rng=rng)
-    p = create_species_pool(D, n_families=5, family_size=100, rng=rng)
-    sample = sample_pool(p, 1, 1, rng=rng)
+    D, W_ba = create_metabolism()
+    p = create_species_pool(D, n_families=5, family_size=100)
+    sample = sample_pool(p, 1, 1)
     @test sample isa MiCroSim.SampleStruct
     @test size(sample.C) == (10, 10, 2)
     @test size(sample.family_ids) == (2,)
@@ -110,8 +104,7 @@ end
     
     # Edge cases
 
-    @test_throws DomainError sample_pool(MiCroSim.PoolStruct(zeros(1, 1, 1), [1], [1], [1], [1], [1], [1]), 1, 1, rng=rng)
-    @test_throws DomainError sample_pool(p, 501, rng=rng)
+    @test_throws DomainError sample_pool(MiCroSim.PoolStruct(zeros(1, 1, 1), [1], [1], [1], [1], [1], [1]), 1, 1)
 end
 
 ### equations.jl
