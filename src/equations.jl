@@ -9,14 +9,13 @@ function equations(u, p, t)
             species[i] = species[i] * (1 / (1 + exp(p.a[i] * (u[i]-p.k[i]))))
         end
         consumption += dropdims(sum(p.C[:, :, i] .* u[i] .* u[p.n_species+1:end]', dims=1)', dims=2)
+        println("species $i consumption: ", dropdims(sum(p.C[:, :, i] .* u[i] .* u[p.n_species+1:end]', dims=1)', dims=2))
         production += dropdims(sum(p.D .* p.C[:, :, i] .* u[i] .* u[p.n_species+1:end]', dims=2), dims=2)
+        println("species $i production: ", dropdims(sum(p.D .* p.C[:, :, i] .* u[i] .* u[p.n_species+1:end]', dims=2), dims=2))
+        println("production", production)
+        println("consumption", consumption)
     end
 
     resources = (p.alpha .- u[p.n_species+1:end]) ./ p.tau - consumption + production
     return vcat(species, resources)
-end
-
-
-function diffeq_wrapper(t, u, du)
-    du .= equations2!(t, u, n_species, present_species, C, D, W_ba, n_reactions, n_splits, m, phi, eta, tau, alpha)
 end
