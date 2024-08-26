@@ -40,3 +40,45 @@ function sample_reaction_indices(rng, D, number_of_reactions)
 
     return chosen_indices
 end
+
+function checks_before_run(n_resources, D, W_ba, tau, alpha)
+    if isnothing(D)
+        if !isnothing(W_ba)
+            println("WARNING: Supplied energy yield matrix (W_ba) but no stoichiometric matrix (D). Overwriting W_ba to ensure compatibility")
+        end
+        D, W_ba = create_metabolism()
+    else
+        if isnothing(W_ba)
+            D, W_ba = create_metabolism()
+            println("WARNING: Supplied stoichiometric matrix (D) but no energy yield matrix (W_ba). Overwriting D to ensure compatibility")
+        end
+    end
+
+    n_resources = size(D, 1)
+
+    D_row, D_col = size(D)
+    if (n_resources != D_row) || (n_resources != D_col)
+        throw(DomainError("Number of resources does not match the size of the stoichiometric matrix (D) \n 
+        number of resources is $n_resources, sizes of D are ($D_row, $D_col)"))
+    end
+
+    W_row, W_col = size(W_ba)
+    if (n_resources != W_row) || (n_resources != W_col)
+        throw(DomainError("Number of resources does not match the size of the energy yield matrix (W_ba) \n 
+        number of resources is $n_resources, sizes of D are ($W_row, $W_col)"))
+    end
+
+    if isnothing(tau)
+        tau = ones(Float64, n_resources)
+    end
+
+    if isnothing(alpha)
+        alpha = vcat([100.0], zeros(Float64, n_resources-1))
+    end
+
+    if length(tau) != n_resources || length(alpha) != n_resources
+        throw(DomainError("Length of dilution terms (tau) or resource availabilities (alpha) does not match the number of resources \n This can happen when tau or alpha is supplied, but the stoichiometric matrix and energy yield matrix are not. \n"))
+    end
+
+    return(D, W_ba, tau, alpha)
+end
