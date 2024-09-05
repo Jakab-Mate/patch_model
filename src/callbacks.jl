@@ -19,18 +19,20 @@ end
 # Should cutoff be divided by number of communities?
 
 function spatial_affect!(integrator, t_inv, start_time, n_invaders, n_species, cutoff, n_comms)
-    integrator.p.present_species = Set{Int}()
-    for i in 1:n_comms
-        present_in_current = findall(x -> x > cutoff, integrator.u[(i-1)*(n_species+n_invaders)+1:i*(n_species+n_invaders)])
-        integrator.p.present_species = union(integrator.p.present_species, present_in_current)
-        if integrator.t >= start_time
-            idx = Int(n_species + floor((integrator.t - start_time) / t_inv)) + 1
-            if idx <= n_invaders + n_species
-                println("invader ", idx-n_species, " added at time ", integrator.t)
-                integrator.u[idx] += 10 # Adding invader only to first community
-            end
+    if integrator.t >= start_time
+        idx = Int(n_species + floor((integrator.t - start_time) / t_inv)) + 1
+        if idx <= n_invaders + n_species
+            println("invader ", idx-n_species, " added at time ", integrator.t)
+            integrator.u[idx] += 10 # Adding invader only to first community
         end
     end
+
+    present_species_set = Set{Int}()
+    for i in 1:n_comms
+        present_in_current = findall(x -> x > cutoff, integrator.u[(i-1)*(n_species+n_invaders)+1:i*(n_species+n_invaders)])
+        present_species_set = union(present_species_set, present_in_current)
+    end
+    integrator.p.present_species = collect(present_species_set)
 end
 
 function create_spatial_callbacks(t_inv, start_time, n_invaders, n_species, cutoff, n_comms)

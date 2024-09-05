@@ -41,7 +41,7 @@ function sample_reaction_indices(rng, D, number_of_reactions)
     return chosen_indices
 end
 
-function checks_before_run(n_resources, D, W_ba, tau, alpha)
+function checks_before_run(D, W_ba, tau, alpha)
     if isnothing(D)
         if !isnothing(W_ba)
             println("WARNING: Supplied energy yield matrix (W_ba) but no stoichiometric matrix (D). Overwriting W_ba to ensure compatibility")
@@ -80,5 +80,5 @@ function checks_before_run(n_resources, D, W_ba, tau, alpha)
         throw(DomainError("Length of dilution terms (tau) or resource availabilities (alpha) does not match the number of resources \n This can happen when tau or alpha is supplied, but the stoichiometric matrix and energy yield matrix are not. \n"))
     end
 
-    return(D, W_ba, tau, alpha)
+    return n_resources, D, W_ba, tau, alpha
 end

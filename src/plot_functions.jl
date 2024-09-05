@@ -12,7 +12,7 @@ function aggregate_by_rowdata(se, row, assay_name)
     return aggregated_data
 end
 
-function plot_MCI(se::SummarizedExperiment, assay_name::String, path::String)
+function plot_MCI(se::SummarizedExperiment, assay_name::String, path::String; comm=false)
     ts_data = Number.(assay(se, assay_name))'
     n_react_array = se.rowdata[!, Symbol("n_reactions")]
     present_accumulator = zeros(Int64, length(se.coldata.time))
@@ -34,17 +34,26 @@ function plot_MCI(se::SummarizedExperiment, assay_name::String, path::String)
 
     p = plot(se.coldata.time, plotter,
         label = labels, legend_position = :outerleft, xaxis = "Time", yaxis = "MCI")
-    savefig(p, joinpath(path, "MCI.png"))
+    
+    if !isinteger(comm)
+        savefig(p, joinpath(path, "MCI.png"))
+    else
+        savefig(p, joinpath(path, "comm$comm" * "MCI.png"))
+    end
+
     println("plot was saved at $path")
 end
 
-function plot_se(se::SummarizedExperiment, assay_name::String, path::String)
+function plot_se(se::SummarizedExperiment, assay_name::String, path::String; comm=false)
     labels = reshape(se.rowdata.name, (1, length(se.rowdata.name)))
 
     p = plot(se.coldata.time, Number.(assay(se, assay_name))',
         label = labels, legend_position = :outerleft, xaxis = "Time", yaxis = "Abundance")
-
-    savefig(p, joinpath(path, "strain_abundances.png"))
+    if !isinteger(comm)
+        savefig(p, joinpath(path, "strain_abundances.png"))
+    else
+        savefig(p, joinpath(path, "comm$comm" * "strain_abundances.png"))
+    end
 
     for attr in ["family", "n_reactions", "n_splits"]
         aggreg_data = aggregate_by_rowdata(se, attr, assay_name)
@@ -52,7 +61,11 @@ function plot_se(se::SummarizedExperiment, assay_name::String, path::String)
         labels = reshape(aggreg_array, (1, length(aggreg_array)))
         p = plot(se.coldata.time, [x for x in values(aggreg_data)],
             label = labels, legend_position = :outerleft, xaxis = "Time", yaxis = "Abundance")
-        savefig(p, joinpath(path, "$attr _abundances.png"))
+        if !isinteger(comm)
+            savefig(p, joinpath(path, "$attr _abundances.png"))
+        else
+            savefig(p, joinpath(path, "comm$comm" * "$attr _abundances.png"))
+        end
     end
 end
 
