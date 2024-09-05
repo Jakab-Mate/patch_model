@@ -32,6 +32,12 @@ sample_pool
 generic_run
 ```
 
+## Simulate spatial dynamics
+
+```@docs
+spatial_run
+```
+
 ## Structs
 
 If you wish to use the structures *PoolStruct* or *SampleStruct*, you will need to specify the module name as well, since these are not exported:
