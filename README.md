@@ -34,6 +34,8 @@ The functions in this package rely on each other's outputs, so generally you wil
 
 4. **generic_run(...)**<span style="display:inline-block; width: 107px;"></span>Takes the sampled species and simulates their dynamics based on a set of ODEs
 
+4. **spatial_run(...)**<span style="display:inline-block; width: 107px;"></span>Spatial alternative of `generic_run`, models multiple interconnected local communities
+
 For more detailed explanations about what each function does, please refer to the [workflow section of the home page](https://jakab-mate.github.io/MiCroSim.jl/dev/readme/#Workflow)
 
 Detailed instructions for using each function can be found in the [User Manual](https://jakab-mate.github.io/MiCroSim.jl/dev/).
