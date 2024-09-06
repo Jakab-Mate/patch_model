@@ -52,14 +52,12 @@ The functions in this package rely on each other's outputs, so generally you wil
 
     ![formula3](./images/species_dynamics.png)
 
-    <span id="species"></span>
     where *delta_w* is the energy yield matrix *C* are the species matrices, *R* are the resource abundances, *m* are the default maintenance values, *E* are the complexity metrics, *eta* describes how the complexity metrics contribute to maintenance costs, *F* are the number of reactions, *phi* describes how the number of reactions contribute to maintenance costs and *N* are the species abundances.
 
     Resource dynamics is as follows:
 
     ![formula4](./images/resource_dynamics.png)
 
-    <span id="resource"></span>
     where $K$ are the inflow rates, *tau* are the dilution rates, *D* is the stoichiometric matrix and the rest of the parameters are the same as above. The first term describes the inflow and depletion of resources from and into an outer environment, the second (negative) term describes consumption and the last (positive) term describes production.
 
     **spatial_run(...)** is an alternative to `generic_run`, and is applicable in cases where the modeled habitat can be partitioned into local communities along some linear axis, such as the gut. The local communities interact with each other through abduction (unidirectional flow) and diffusion (bidirectional flow). These processes may affect species and resources at different rates, which the user can specify. The outer environment is assumed to be directly connected only to the first local community (as is the case in the gut), and thus, invaders and resource input will first appear here, but may spread to the subsequent local communities due to the aforementioned two processes.
