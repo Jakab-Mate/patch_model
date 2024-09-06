@@ -4,9 +4,9 @@
 
 ## A general-purpose microbial consumer-resource model that outputs simulated data in the SummarizedExperiment (SE) format.
 
-This project offers a quick and easy method for simulating microbial community dynamics based solely on their metabolic interactions. The model uses matrix representations for species, which encode the metabolites a species can consume, and also the ones it can produce. Community dynamics are simulated using a set of Ordinary Differential Equations (ODEs), and the produced time-series data is stored in a SummarizedExperiment data container.
+This project offers a quick and easy method for simulating microbial community dynamics based solely on their metabolic interactions. The model uses matrix representations for species, which encode the metabolites a species can consume, as well as those it can produce. Community dynamics are simulated using a set of Ordinary Differential Equations (ODEs), and the produced time-series data is stored in a SummarizedExperiment data container.
 
-**Please refer to the [project website](https://jakab-mate.github.io/MiCroSim.jl/dev/readme/) for a more detailed documentation**
+**Please refer to the [project website](https://jakab-mate.github.io/MiCroSim.jl/dev/readme/) for more detailed documentation**
 
 ### Applicability
 
@@ -25,7 +25,7 @@ Pkg.add(url="https://github.com/Jakab-Mate/MiCroSim.jl.git")
 ```
 
 ### Workflow
-The functions in this package rely on each other's outputs, so generally you will want to use them in the following order:
+The functions in this package rely on each other's outputs, so generally, you will want to use them in the following order:
 1. **create_metabolism(...)**<span style="display:inline-block; width: 56px;"></span>Generates the set of possible reactions (net conversions)
 
 2. **create_species_pool(...)**<span style="display:inline-block; width: 48px;"></span>Generates the pool of possible species by sampling from the possible reactions
