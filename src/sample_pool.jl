@@ -11,6 +11,8 @@ Samples species from a species pool
 # Optional arguments
 - `seed::Int64`: Random number generator seed. Default is `1234`.
 - `n_comms::Int64`: Number of communities. Default is `1`.
+- `ph::Bool`: Whether to sample pH values. If true, optimal pH value is sampled from the (0, 14) range for each species. 
+Default is `false`, where optimal pH is set to 7.0 for all species.
 
 # Output
 `SampleStruct` with the following fields:
@@ -26,7 +28,7 @@ Samples species from a species pool
 - `a::Array{Float64}`: The strength of host control on the sampled species.
 - `k::Array{Float64}`: The critical abundance that triggers host control on the sampled species.
 """
-function sample_pool(p::PoolStruct, n_species::Int64, n_invaders::Int64; n_comms::Int64=1, seed::Int64=1234)
+function sample_pool(p::PoolStruct, n_species::Int64, n_invaders::Int64; n_comms::Int64=1, seed::Int64=1234, ph::Bool=false)
     rng = MersenneTwister(seed)
 
     n_resources = size(p.pool, 1)
@@ -54,8 +56,13 @@ function sample_pool(p::PoolStruct, n_species::Int64, n_invaders::Int64; n_comms
     species_initial_abundances = vcat(rand!(rng, zeros(n_species)), zeros(n_invaders))
     resource_initial_abundances = rand!(rng, zeros(n_resources))
 
-    # All communities have random initial abundances (?)
+    if ph
+        species_ph_opts = rand!(rng, zeros(n_sampled)) .* 14.0
+    else
+        species_ph_opts = fill(7.0, n_sampled)
+    end
 
+    # All communities have random initial abundances (?)
     if n_comms > 1
         for i in 2:n_comms
             species_initial_abundances = vcat(species_initial_abundances, vcat(rand!(rng, zeros(n_species)), zeros(n_invaders)))
@@ -64,6 +71,6 @@ function sample_pool(p::PoolStruct, n_species::Int64, n_invaders::Int64; n_comms
     end
 
     return SampleStruct(n_species, n_invaders, species_C_matrices, species_family_ids, species_m, species_n_reactions, species_n_splits, 
-    species_initial_abundances, resource_initial_abundances, species_a, species_k)
+    species_initial_abundances, resource_initial_abundances, species_a, species_k, species_ph_opts)
 
 end

@@ -1,4 +1,4 @@
-function spatial_equations(u, p, t)
+function spatial_equations(u, p, t; ph_list=nothing)
     n_species = p.n_species
     n_resources = p.n_resources
     N = length(u) ÷ (n_species + n_resources)  # Number of communities
@@ -13,13 +13,21 @@ function spatial_equations(u, p, t)
     p_nonfirst.alpha = zeros(Float64, length(p.alpha))
 
     # FIRST COMMUNITY
-    du_mat[:, 1] .= equations(u_mat[:, 1], p, t)
-
-    # OTHER COMMUNITIES
-    for i in 2:N
-        du_mat[:, i] .= equations(u_mat[:, i], p_nonfirst, t)
+    if ph_list === nothing
+        du_mat[:, 1] .= equations(u_mat[:, 1], p, t)
+    else
+        du_mat[:, 1] .= equations(u_mat[:, 1], p, t, ph=ph_list[1])
     end
-
+    # OTHER COMMUNITIES
+    if ph_list === nothing
+        for i in 2:N
+            du_mat[:, i] .= equations(u_mat[:, i], p_nonfirst, t)
+        end
+    else
+        for i in 2:N
+            du_mat[:, i] .= equations(u_mat[:, i], p_nonfirst, t, ph=ph_list[i])
+        end
+    end 
     # -------Diffusion, Advection--------
 
     # MIDDLING COMMUNITIES

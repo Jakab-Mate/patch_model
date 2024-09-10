@@ -20,8 +20,8 @@ Run the model with the given parameters and sample by solving a set of ODEs usin
 - `sample::SampleStruct`: A sample struct containing the initial conditions and parameters for the model.
 
 # Recommended but optional arguments
-- `D::Union{Nothing, AbstractMatrix}`: The stoichiometric matrix for the model. If not supplied, a default matrix will be created.
-- `W_ba::Union{Nothing, AbstractMatrix}`: The energy yield matrix for the model. If not supplied, a default matrix will be created.
+- `D::Union{Nothing, Matrix{Int64}}`: The stoichiometric matrix for the model. If not supplied, a default matrix will be created.
+- `W_ba::Union{Nothing, Matrix{Float64}}`: The energy yield matrix for the model. If not supplied, a default matrix will be created.
 - `path::String`: The path to save the output plots. Default is `homedir()`.
 - `t_span::Tuple{Int64, Int64}`: The time span for the simulation. Default is `(0, 1000)`.
 
@@ -40,8 +40,8 @@ Run the model with the given parameters and sample by solving a set of ODEs usin
 Returns time series data in a SummarizedExperiment (SE) data container, which can be used for a variety of analyses. For details, see [MicrobiomeAnalysis.jl](https://github.com/JuliaTurkuDataScience/MicrobiomeAnalysis.jl)
 """
 function generic_run(sample::SampleStruct;
-    D = nothing,
-    W_ba = nothing,
+    D::Union{Nothing, Matrix{Int64}}=nothing,
+    W_ba::Union{Nothing, Matrix{Float64}}=nothing,
     path::String=homedir(),
     t_span::Tuple{Int64, Int64}=(0, 1000), 
     t_inv::Float64=25.0, 
@@ -54,7 +54,7 @@ function generic_run(sample::SampleStruct;
     plot::Bool=true,
     host_regulation::Bool=true)
 
-    D, W_ba, tau, alpha = checks_before_run(D, W_ba, tau, alpha)
+    n_resources, D, W_ba, tau, alpha = checks_before_run(D, W_ba, tau, alpha)
 
     n_species = sample.n_species
     n_invaders = sample.n_invaders
@@ -121,28 +121,30 @@ where resources and invaders appear in the first community and can spread to the
 - `D_resources::Float64`: The diffusion coefficient for resources. Default is `0.1`.
 - `A_species::Float64`: The advection coefficient for species. Default is `0.1`.
 - `A_resources::Float64`: The advection coefficient for resources. Default is `0.1`.
+- `ph_list::Union{Nothing, Vector{Float64}}`: A list of pH values for each community. If not supplied, the default pH value is 7.0.
 
 # Output
 Returns a dictionary of SummarizedExperiment (SE) data containers
 """
 function spatial_run(n_comms::Int64, sample::SampleStruct;
-    D_species=0.1,
-    D_resources=0.1,
-    A_species=0.1,
-    A_resources=0.1,
-    D=nothing,
-    W_ba=nothing,
-    path=homedir(),
-    t_span=(0, 1000),
-    t_inv=25.0,
-    t_inv_0=100.0,
-    cutoff=0.0001,
-    phi=0.1,
-    eta=0.1,
-    tau=nothing,
-    alpha=nothing,
-    plot=true,
-    host_regulation=true)
+    ph_list::Union{Nothing, Vector{Float64}} = nothing,
+    D_species::Float64=0.1,
+    D_resources::Float64=0.1,
+    A_species::Float64=0.1,
+    A_resources::Float64=0.1,
+    D::Union{Nothing, Matrix{Int64}}=nothing,
+    W_ba::Union{Nothing, Matrix{Float64}}=nothing,
+    path::String=homedir(),
+    t_span::Tuple{Int64, Int64}=(0, 1000),
+    t_inv::Float64=25.0,
+    t_inv_0::Float64=100.0,
+    cutoff::Float64=0.0001,
+    phi::Float64=0.1,
+    eta::Float64=0.1,
+    tau::Union{Nothing, Array{Float64}}=nothing,
+    alpha::Union{Nothing, Array{Float64}}=nothing,
+    plot::Bool=true,
+    host_regulation::Bool=true)
 
     n_resources, D, W_ba, tau, alpha = checks_before_run(D, W_ba, tau, alpha)
 
@@ -153,8 +155,17 @@ function spatial_run(n_comms::Int64, sample::SampleStruct;
 
     params = ParamStruct(n_species+n_invaders, n_resources, collect(1:n_species), sample.C, D, W_ba, sample.n_reactions, sample.n_splits, sample.m,
             phi, eta, tau, alpha, sample.a, sample.k, host_regulation, D_species=D_species, D_resources=D_resources, A_species=A_species, A_resources=A_resources)
+    
 
-    prob = ODEProblem(spatial_equations, u0, t_span, params)
+    if ph_list === nothing
+        prob = ODEProblem(spatial_equations, u0, t_span, params)
+    else
+        if length(ph_list) != n_comms
+            throw(DomainError("Length of ph_list should be equal to the number of communities"))
+        end
+        prob = ODEProblem((u, p, t) -> spatial_equations(u, p, t, ph_list=ph_list), u0, t_span, params)
+    end
+
     cb = create_spatial_callbacks(t_inv, t_inv_0, n_invaders, n_species, cutoff, n_comms)
     solution = solve(prob, KenCarp4(autodiff=false), abstol = 1e-10, reltol = 1e-10; saveat=1, callback=cb)
 
