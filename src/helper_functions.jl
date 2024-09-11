@@ -44,13 +44,15 @@ end
 function checks_before_run(D, W_ba, tau, alpha)
     if isnothing(D)
         if !isnothing(W_ba)
-            println("WARNING: Supplied energy yield matrix (W_ba) but no stoichiometric matrix (D). Overwriting W_ba to ensure compatibility")
+            @warn "WARNING: Supplied energy yield matrix (W_ba) but no stoichiometric matrix (D). Creating D matrix of same size"
+            D, W_ba = create_metabolism(n_resources=length(W_ba[1, :]))
+        else
+            D, W_ba = create_metabolism()
         end
-        D, W_ba = create_metabolism()
     else
         if isnothing(W_ba)
-            D, W_ba = create_metabolism()
-            println("WARNING: Supplied stoichiometric matrix (D) but no energy yield matrix (W_ba). Overwriting D to ensure compatibility")
+            D, W_ba = create_metabolism(n_resources=length(D[1, :]))
+            @warn "WARNING: Supplied stoichiometric matrix (D) but no energy yield matrix (W_ba). Creating W_ba matrix of same size"
         end
     end
 
