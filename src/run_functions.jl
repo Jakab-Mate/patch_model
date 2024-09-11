@@ -73,7 +73,8 @@ function generic_run(sample::SampleStruct;
         name = ["strain$i" for i in 1:(n_species+n_invaders)],
         family = ["family$i" for i in sample.family_ids],
         n_reactions = ["$i reactions" for i in sample.n_reactions],
-        n_splits = ["$i splits" for i in sample.n_splits]
+        n_splits = ["$i splits" for i in sample.n_splits],
+        ph_opt = ["pH $i" for i in sample.ph_opts]
     );
     coldata = DataFrame(
         name = ["t$i" for i in 1:length(t)],
@@ -154,7 +155,8 @@ function spatial_run(n_comms::Int64, sample::SampleStruct;
     u0 = vcat(vcat(sample.species_abundance, repeat(zeros(n_species+n_invaders), n_comms-1)), vcat(sample.resource_abundance, repeat(zeros(n_resources), n_comms-1)))
 
     params = ParamStruct(n_species+n_invaders, n_resources, collect(1:n_species), sample.C, D, W_ba, sample.n_reactions, sample.n_splits, sample.m,
-            phi, eta, tau, alpha, sample.a, sample.k, host_regulation, D_species=D_species, D_resources=D_resources, A_species=A_species, A_resources=A_resources)
+            phi, eta, tau, alpha, sample.a, sample.k, host_regulation, D_species=D_species, D_resources=D_resources, A_species=A_species, A_resources=A_resources,
+            ph_opts=sample.ph_opts)
     
 
     if ph_list === nothing
