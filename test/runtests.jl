@@ -46,12 +46,12 @@ end
     tau = ones(5)
     alpha = ones(5)
     D, W_ba = create_metabolism(n_resources=12)
-    
+
     @test_throws DomainError MiCroSim.checks_before_run(nothing, nothing, tau, alpha)
-    @test_logs :warn "WARNING: Supplied energy yield matrix (W_ba) but no stoichiometric matrix (D). Creating D matrix of same size" begin
+    @test_logs :warn r"WARNING: Supplied energy yield matrix (W_ba) but no stoichiometric matrix (D). Creating D matrix of same size" begin
         MiCroSim.checks_before_run(nothing, W_ba, nothing, nothing)
     end
-    @test_logs :warn "WARNING: Supplied stoichiometric matrix (D) but no energy yield matrix (W_ba). Creating W_ba matrix of same size" begin 
+    @test_logs :warn r"WARNING: Supplied stoichiometric matrix (D) but no energy yield matrix (W_ba). Creating W_ba matrix of same size" begin 
         MiCroSim.checks_before_run(D, nothing, nothing, nothing)
     end
 end
