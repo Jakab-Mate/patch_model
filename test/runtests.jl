@@ -1,6 +1,7 @@
 using MiCroSim
 using Test
 using Random
+using Logging
 
 ### helper_functions.jl
 @testset "Testing non_zero_pos" begin
@@ -48,8 +49,8 @@ end
     D, W_ba = create_metabolism(n_resources=12)
 
     @test_throws DomainError MiCroSim.checks_before_run(nothing, nothing, tau, alpha)
-    @test_logs (:warn, "WARNING: Supplied energy yield matrix (W_ba) but no stoichiometric matrix (D). Creating D matrix of same size"), MiCroSim.checks_before_run(nothing, W_ba, nothing, nothing)
-    @test_logs (:warn, "WARNING: Supplied stoichiometric matrix (D) but no energy yield matrix (W_ba). Creating W_ba matrix of same size"), MiCroSim.checks_before_run(D, nothing, nothing, nothing)
+    @test_logs (:warn, r"WARNING: Supplied energy yield matrix (W_ba) but no stoichiometric matrix (D). Creating D matrix of same size"), MiCroSim.checks_before_run(nothing, W_ba, nothing, nothing)
+    @test_logs (:warn, r"WARNING: Supplied stoichiometric matrix (D) but no energy yield matrix (W_ba). Creating W_ba matrix of same size"), MiCroSim.checks_before_run(D, nothing, nothing, nothing)
 end
 
 ### generative_functions.jl
