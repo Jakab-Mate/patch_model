@@ -53,6 +53,33 @@ function create_metabolism(; n_resources::Int64=10, n_levels::Int64=5, energy_yi
     return D, W_ba
 end
 
+
+"""
+    create_metabolism_2(; n_resources::Int64=10, n_levels::Int64=5, energy_yields::String="Uniform_1", seed::Int64=1234)
+"""
+function create_metabolism_2(; n_resources::Int64=10, seed::Int64=1234)
+    rng = MersenneTwister(seed)
+
+    if n_resources < 2
+        throw(DomainError("Number of resources should be greater than 1"))
+    end
+    
+    W = sort(rand(rng, Uniform(0, 15), n_resources); rev=true)
+
+    D = zeros(Int64, n_resources, n_resources)
+    W_ba = zeros(Float64, n_resources, n_resources)
+    for i in 1:n_resources
+        for j in 1:n_resources
+            if W[j] - W[i] > 0
+                D[i, j] = 1
+                W_ba[i, j] = W[j] - W[i] # 100% efficiency?
+            end
+        end
+    end
+
+    return D, W_ba
+end
+
 """
     create_species_pool(D::Matrix; n_families::Int64=5, family_size::Int64=100, dirichlet_hyper::Real=100, between_family_var::Real=0.1, inside_family_var::Real=0.05, h::Real=1, maintenance::Real=0.1, specialist::Real=1, generalist::Real=1, a_dist::Union{Distributions.Sampleable, Nothing}=nothing, k_dist::Union{Distributions.Sampleable, Nothing}=nothing, seed::Int64=1234)
 
@@ -99,7 +126,7 @@ function create_species_pool(D::Matrix; n_families::Int64=5,
 
     n_resources::Int64 = length(D[:, 1])
 
-    if isnothing spec_constraint
+    if isnothing(spec_constraint)
         spec_constraint = vcat([false], repeat([true], n_resources-1))
     end
     
