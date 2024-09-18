@@ -1,18 +1,18 @@
 """
     generic_run(sample::SampleStruct;
-     D=nothing,
-     W_ba=nothing,
-     path=homedir(),
-     t_span=(0, 1000),
-     t_inv=25.0,
-     t_inv_0=100.0,
-     cutoff=0.0001,
-     phi=0.1,
-     eta=0.1,
-     tau=nothing,
-     alpha=nothing,
-     plot=true,
-     host_regulation=true)
+       D=nothing,
+       W_ba=nothing,
+       path=homedir(),
+       t_span=(0, 1000),
+       t_inv=25.0,
+       t_inv_0=100.0,
+       cutoff=0.0001,
+       phi=0.1,
+       eta=0.1,
+       tau=nothing,
+       alpha=nothing,
+       plot=true,
+       host_regulation=true)
 
 Run the model with the given parameters and sample by solving a set of ODEs using the KenCarp4 solver.
 
@@ -92,23 +92,25 @@ end
 
 """
     spatial_run(n_comms::Int64, sample::SampleStruct;
-    D_species=0.1,
-    D_resources=0.1,
-    A_species=0.1,
-    A_resources=0.1,
-    D=nothing,
-    W_ba=nothing,
-    path=homedir(),
-    t_span=(0, 1000),
-    t_inv=25.0,
-    t_inv_0=100.0,
-    cutoff=0.0001,
-    phi=0.1,
-    eta=0.1,
-    tau=nothing,
-    alpha=nothing,
-    plot=true,
-    host_regulation=true)
+        ph_list::Union{Nothing, Vector{Float64}}=nothing,
+        ph_strength=1.0,
+        D_species=0.1,
+        D_resources=0.1,
+        A_species=0.1,
+        A_resources=0.1,
+        D=nothing,
+        W_ba=nothing,
+        path=homedir(),
+        t_span=(0, 1000),
+        t_inv=25.0,
+        t_inv_0=100.0,
+        cutoff=0.0001,
+        phi=0.1,
+        eta=0.1,
+        tau=nothing,
+        alpha=nothing,
+        plot=true,
+        host_regulation=true)
 
 Run the spatially extended version of the model, where a set of communities are simulated. The communities resemble different sections of the gut,
 where resources and invaders appear in the first community and can spread to the other communities through diffusion and advection.
@@ -122,6 +124,7 @@ where resources and invaders appear in the first community and can spread to the
 - `D_resources::Float64`: The diffusion coefficient for resources. Default is `0.1`.
 - `A_species::Float64`: The advection coefficient for species. Default is `0.1`.
 - `A_resources::Float64`: The advection coefficient for resources. Default is `0.1`.
+- `ph_strength::Float64`: The strength of the pH effect on growth. Default is `1.0`.
 - `ph_list::Union{Nothing, Vector{Float64}}`: A list of pH values for each community. If not supplied, the default pH value is 7.0.
 
 # Output
@@ -129,6 +132,7 @@ Returns a dictionary of SummarizedExperiment (SE) data containers
 """
 function spatial_run(n_comms::Int64, sample::SampleStruct;
     ph_list::Union{Nothing, Vector{Float64}} = nothing,
+    ph_strength::Float64=1.0,
     D_species::Float64=0.1,
     D_resources::Float64=0.1,
     A_species::Float64=0.1,
@@ -156,9 +160,8 @@ function spatial_run(n_comms::Int64, sample::SampleStruct;
 
     params = ParamStruct(n_species+n_invaders, n_resources, collect(1:n_species), sample.C, D, W_ba, sample.n_reactions, sample.n_splits, sample.m,
             phi, eta, tau, alpha, sample.a, sample.k, host_regulation, D_species=D_species, D_resources=D_resources, A_species=A_species, A_resources=A_resources,
-            ph_opts=sample.ph_opts)
+            ph_opts=sample.ph_opts, ph_strength=ph_strength)
     
-
     if ph_list === nothing
         prob = ODEProblem(spatial_equations, u0, t_span, params)
     else

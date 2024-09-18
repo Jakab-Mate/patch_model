@@ -73,6 +73,7 @@ Create a pool of species by sampling reactions from a matrix denoting all possib
 - `generalist::Real`: The generalist part of the odds ratio specialists:generalists in the pool. Default is `1`.
 - `a_dist::Union{Distributions.Sampleable, Nothing}`: Distribution to sample the strength of host control. Default is `Uniform(0.5, 1.5)`.
 - `k_dist::Union{Distributions.Sampleable, Nothing}`: Distribution to sample the critical abundance that triggers host control. Default is `Uniform(99.999, 100.001)`.
+- `spec_constraint::Union{Array{Bool}, Nothing}`: Boolean array of resources that specialists can consume. If nothing, first element is false, rest is true. Default is `nothing`.
 - `rng::Int64`: Random number generator seed. Default is `1234`.
 
 # Output
@@ -87,9 +88,8 @@ Create a pool of species by sampling reactions from a matrix denoting all possib
 """
 function create_species_pool(D::Matrix; n_families::Int64=5, 
     family_size::Int64=100, dirichlet_hyper::Real=100, between_family_var::Real=0.1, inside_family_var::Real=0.05, 
-    h::Real=1, maintenance::Real=0.1, specialist::Real=1, generalist::Real=1, 
-    a_dist::Union{Distributions.Sampleable, Nothing}=nothing, k_dist::Union{Distributions.Sampleable, Nothing}=nothing, seed::Int64=1234)
-
+    h::Real=1, maintenance::Real=0.1, specialist::Real=1, generalist::Real=1, a_dist::Union{Distributions.Sampleable, Nothing}=nothing,
+    k_dist::Union{Distributions.Sampleable, Nothing}=nothing, spec_constraint::Union{Array{Bool}, Nothing}=nothing, seed::Int64=1234)
 
     if isnothing(seed)
         rng = MersenneTwister(1234)
@@ -98,6 +98,10 @@ function create_species_pool(D::Matrix; n_families::Int64=5,
     end
 
     n_resources::Int64 = length(D[:, 1])
+
+    if isnothing spec_constraint
+        spec_constraint = vcat([false], repeat([true], n_resources-1))
+    end
     
     specialist_prob::Int64 = round(Int64, specialist / (generalist + specialist) * 100)
     choices = vcat(fill("Spec", specialist_prob), fill("No", 100-specialist_prob))
@@ -119,6 +123,7 @@ function create_species_pool(D::Matrix; n_families::Int64=5,
         k_dist = Uniform(99.999, 100.001) # relate this to alpha? (resource input flux)
     end
 
+    D_spec = D * spec_constraint'
     for family in 1:n_families
         family_range = (family-1) * family_size + 1 : family * family_size
         family_ids[family_range] .= family
@@ -135,16 +140,22 @@ function create_species_pool(D::Matrix; n_families::Int64=5,
         k[family_range] .= family_k_value
 
         if spec_gen[family] == "Spec"
-            family_number_of_reactions = rand(rng, [4, 5])
+            family_number_of_reactions = rand(rng, [3, 4])
         else
-            family_number_of_reactions = rand(rng, [2, 3])
+            family_number_of_reactions = rand(rng, [1, 2])
         end
 
         n_reactions[family_range] .= family_number_of_reactions
 
         prior_values = normalize(rand!(rng, zeros(family_number_of_reactions))) .* dirichlet_hyper
         Dir_dist = Distributions.Dirichlet(prior_values)
-        family_reaction_indices = sample_reaction_indices(rng, D, family_number_of_reactions)
+
+        if spec_gen[family] == "Spec"
+            family_reaction_indices = sample_reaction_indices(rng, D_spec, family_number_of_reactions)
+        else
+            family_reaction_indices = sample_reaction_indices(rng, D, family_number_of_reactions)
+        end
+
         family_n_splits = 0
         for react in family_reaction_indices
             family_n_splits += (react[1] - react[2])
