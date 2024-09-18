@@ -55,7 +55,16 @@ end
 
 
 """
-    create_metabolism_2(; n_resources::Int64=10, n_levels::Int64=5, energy_yields::String="Uniform_1", seed::Int64=1234)
+    create_metabolism_2(; n_resources::Int64=10, seed::Int64=1234)
+
+Generates a universal metabolism, where stoichiometry is ignored and energy yields are sampled from a uniform distribution.
+
+# Optional arguments
+- `n_resources::Int64`: Number of possible resources in the system. Default is `10`.
+- `seed::Int64`: Random number generator seed. Default is `1234`.
+
+# Output
+`Stoichiometric matrix, Energy yield matrix`
 """
 function create_metabolism_2(; n_resources::Int64=10, seed::Int64=1234)
     rng = MersenneTwister(seed)
@@ -150,7 +159,7 @@ function create_species_pool(D::Matrix; n_families::Int64=5,
         k_dist = Uniform(99.999, 100.001) # relate this to alpha? (resource input flux)
     end
 
-    D_spec = D * spec_constraint'
+    D_spec = D .* spec_constraint'
     for family in 1:n_families
         family_range = (family-1) * family_size + 1 : family * family_size
         family_ids[family_range] .= family
