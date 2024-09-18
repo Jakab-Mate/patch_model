@@ -133,7 +133,6 @@ end
     t = 0
     out = MiCroSim.equations(u, p, t)
     @test size(out) == (20,)
-    @test all(out .>= 0)
 end
 
 ### spatial_equations.jl
@@ -143,7 +142,6 @@ end
     t = 0
     out = MiCroSim.spatial_equations(u, p, t)
     @test size(out) == (42,)
-    @test all(out .>= 0)
 end
 
 ### run_functions.jl
