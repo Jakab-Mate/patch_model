@@ -1,38 +1,95 @@
+"""
+MANDATORY ARGUMENTS
+- n_repeats::Int64: Number of repetitions for the simulation.
+- basepath::String: Path to the directory where the results will be saved.
+
+OPTIONAL ARGUMENTS
+Resource parameters:
+- `n_complex`::Int64: Number of complex resources. Default is `3`.
+- `n_simple`::Int64: Number of simple resources. Default is `10`.
+- `n_monomer`::Int64: Number of monomer resources. Default is `5`.
+- `gapsize`::Int64: Size of the gap between complex and simple resources. Default is `15`.
+
+Resource supply parameters:
+- `influx_amount`::Float64: Amount of resource influx. Default is `0.0`.
+- `influx_time`::Float64: Time between resource influxes. Default is `1.0`.
+- `alpha_high`::Float64: Controls constant resource supply if `mucus=false`. Each local community receives a continuous supply 100 units of complex resource, of which `alpha_high` amount is dedicated to a single complex resource. The remainder is split evenly between other complex resources. Default is `100.0`.
+
+Species parameters:
+- `n_invaders`::Int64: Number of invading species. Default is `100`.
+- `t_inv`::Float64: Time between the introduction of invading species. Default is `1.0`.
+- `n_species`::Int64: Number of species initially in the habitat. Default is `1`.
+- `pool_size`::Int64: Size of the species pool. Default is `500`.
+- `tradeoff_strength`__number_consumed::Float64: Trade-off strength for the number of resources consumed. Default is `0.1`.
+- `tradeoff_strength`__number_of_splits::Float64: Trade-off strength for the "complexity" of a species' reaction repertoire, based on the number of enzymatic cuts they perform. Default is `0.1`.
+- `h`::Float64: Reaction rate allocation tradeoff. The h-th power of reaction rates in a species always sums to one. Default is `1.0`.
+- `gen_n_consumed`::Int64: Number of resources consumed by generalist species. Default is `4`.
+- `spec_n_consumed`::Int64: Number of resources consumed by specialist species. Default is `1`.
+- `consume_all_monomers`::Bool: Whether every species is able to consume all monomers. Default is `false`.
+
+Mucus parameters:
+- `mucus`::Bool: Whether to include mucus in the simulation, where resource supply is constant. Default is `true`.
+- `mucus_disjunct`::Bool: Whether the mucus resource is disjunct from the rest of the primary resources (there is no overlap in their byproducts). Default is `true`.
+- `mucus_simple`::Int64: Only used if `mucus_disjunt=true` Number of simple resources in the mucus resource breakdown pathways. Default is `5`.
+- `mucus_mono`::Int64: Only used if `mucus_disjunt=true` Number of monomer resources in the mucus resource breakdown pathways. Default is `4`.
+- `mucus_gap`::Int64: Only used if `mucus_disjunt=true` Size of the gap between mucus and simple mucus-specific resources. Default is `10`.
+
+Simulation parameters:
+- `ncomms`::Int64: Number of communities in the simulation. Default is `3`.
+- `t_span`::Tuple{Float64, Float64}: Time span of the simulation. Default is `(0, 150)`.
+- `cutoff`::Float64: Species under cutoff are considered extinct. Default is `0.0001`.
+- `symmetrical`::Bool: Whether diffusion is symmetrical or directional across communities. Default is `true`.
+- `limited_pathways`::Bool: Whether to limit the underlying metabolic reaction system by excluding ~half of the energetically possible byproducts of resources. Default is `true`.
+
+Stochasticity parameters:
+- `set_seeds`::Union{Nothing, Vector{Int64}}: If provided, seeds for each repeat. Default is `nothing`.
+- `fix_metab`::Bool: Whether to use the same metabolism for all repeats. Default is `false`.
+- `fix_pool`::Bool: Whether to use the same species pool for all repeats. Default is `false`.
+- `fix_sample`::Bool: Whether to use the same sample for all repeats. Default is `false`.
+- `fix_callbacks`::Bool: Whether to use the same callbacks for all repeats. Default is `false`.
+- `fix_order`::Bool: Whether to fix the order of invading species. Default is `false`.
+"""
 function repeat_params(n_repeats, basepath; 
-    n_complex=3, #ok
-    n_simple=10, #ok
-    n_monomer=5, #ok
-    gapsize=15, #ok
-    n_resources = n_complex + n_simple + n_monomer, #?
-    n_species = 1, # set to 0? ok
-    n_invaders = 40,  # 220 ok
-    pool_size = 500, #ok
-    ncomms = 3, #ok
-    t_span = (0, 60), #ok
-    cutoff = 0.0001, #ok
-    tradeoff_strength__number_consumed = 0.1, #ok
-    tradeoff_strength__number_of_splits = 0.1, #ok
-    gen_n_consumed = 4, #ok
-    spec_n_consumed = 1, #ok
-    symmetrical = true, #ok
-    limited_pathways = true, #ok
-    consume_all_monomers = true, #ok
-    h = 1.0, #ok
-    influx_amount = 0.0, #ok
-    influx_time = 1.0, #ok
-    mucus = true, #ok
-    mucus_disjunct = true, #ok
-    mucus_simple = 5, #ok
-    mucus_mono = 4, #ok
-    mucus_gap = 10, #ok
-    t_inv = 1.0, #ok
-    alpha_high = 100.0, #ok
-    set_seeds = nothing, #ok
-    fix_metab = false, #ok
-    fix_pool = false, #ok
-    fix_sample = false, #ok
+    # Resource params
+    n_complex=3,
+    n_simple=10,
+    n_monomer=5,
+    gapsize=15,
+    n_resources = n_complex + n_simple + n_monomer,
+    # Resource supply params
+    influx_amount = 0.0,
+    influx_time = 1.0,
+    alpha_high = 100.0, #TODO this should be a vector for more customization
+    # Species params
+    n_species = 1,
+    n_invaders = 100,
+    t_inv = 1.0,
+    pool_size = 500,
+    tradeoff_strength__number_consumed = 0.1,
+    tradeoff_strength__number_of_splits = 0.1,
+    h = 1.0,
+    gen_n_consumed = 4,
+    spec_n_consumed = 1,
+    consume_all_monomers = true,
+
+    # Mucus params
+    mucus = true,
+    mucus_disjunct = true,
+    mucus_simple = 5,
+    mucus_mono = 4,
+    mucus_gap = 10,
+    # Simulation params
+    ncomms = 3,
+    t_span = (0, 150),
+    cutoff = 0.0001,
+    symmetrical = true,
+    limited_pathways = true,
+    set_seeds = nothing,
+    fix_metab = false,
+    fix_pool = false,
+    fix_sample = false,
     fix_callbacks = false,
-    shuffle = false) #ok
+    fix_order = false)
 
     alpha_list = []
     if !mucus
@@ -123,9 +180,9 @@ function repeat_params(n_repeats, basepath;
         end
 
         if fix_sample
-            sample = sample_pool(pool, n_species, n_invaders, n_comms=ncomms, seed=masterseed, shuffle=shuffle)
+            sample = sample_pool(pool, n_species, n_invaders, n_comms=ncomms, seed=masterseed, fix_order=fix_order)
         else
-            sample = sample_pool(pool, n_species, n_invaders, n_comms=ncomms, seed=seed, shuffle=shuffle)
+            sample = sample_pool(pool, n_species, n_invaders, n_comms=ncomms, seed=seed, fix_order=fix_order)
         end
         
         if fix_callbacks
