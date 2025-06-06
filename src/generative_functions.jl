@@ -16,7 +16,7 @@ function create_metabolism(n_complex::Int64,
     n_monomer::Int64,
     gapsize::Int64;
     limited_pathways::Bool=false,
-    seed::Union{Real, nothing}=nothing)
+    seed::Union{Real, Nothing}=nothing)
 
     if isnothing(seed)
         seed = rand()
@@ -83,7 +83,7 @@ Create a species pool
 
 """
 function create_species_pool(pool_size::Int64, n_complex::Int64, n_simple::Int64, n_monomer::Int64, monomer_content::Array{Int64};
-    seed::Union{Real, nothing}=nothing,
+    seed::Union{Real, Nothing}=nothing,
     maintenance::Real=0.1, 
     specialist::Real=1, 
     generalist::Real=1, 
