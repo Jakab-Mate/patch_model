@@ -1,5 +1,5 @@
 push!(LOAD_PATH, "../src/")
-using MiCroSim, Documenter
+using Patches, Documenter
 
 ENV["GKSwstype"] = "100"
 
@@ -23,8 +23,8 @@ readme_path = joinpath(@__DIR__, "../../main_repo/README.md")
 makedocs(
     format = Documenter.HTML(inventory_version = "0.1"),
     authors = "Jakab Máté",
-    sitename = "MiCroSim.jl",
-    modules = [MiCroSim],
+    sitename = "Patches.jl",
+    modules = [Patches],
     pages = [
         "Home" => "readme.md",
         "Manual" => "index.md",
@@ -34,11 +34,11 @@ makedocs(
             "Populated + invaders" => "example3.md"
         ]
     ],
-    remotes = Dict(joinpath(pwd(), "main_repo") => Documenter.Remotes.GitHub("Jakab-Mate", "MiCroSim.jl"))
+    remotes = Dict(joinpath(pwd(), "main_repo") => Documenter.Remotes.GitHub("Jakab-Mate", "patch_model.jl"))
 )
 
 deploydocs(
-    repo = "github.com/Jakab-Mate/MiCroSim.jl",
+    repo = "github.com/Jakab-Mate/patch_model.jl",
     branch = "gh-pages",
     devbranch = "main",
     target = "build"
