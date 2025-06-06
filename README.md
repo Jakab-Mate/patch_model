@@ -1,16 +1,10 @@
 # Resource patch model
 
-[![Build Status](https://github.com/Jakab-Mate/MiCroSim.jl/actions/workflows/CI.yml/badge.svg?branch=main)](https://github.com/Jakab-Mate/MiCroSim.jl/actions/workflows/CI.yml?query=branch%3Amain)
-
 ## A microbial consumer-resource model investigating the microbial communities that form on the surface of different resource patches in the gut
 
-This project offers a quick and easy method for simulating microbial community dynamics based solely on their metabolic interactions. The model uses matrix representations for species, which encode the metabolites a species can consume, as well as those it can produce. Community dynamics are simulated using a set of Ordinary Differential Equations (ODEs), and the produced time-series data is stored in a SummarizedExperiment data container.
+This model builds on our [previous project](https://github.com/Jakab-Mate/MiCroSim.jl), which simulates microbial community dynamics based solely on their metabolic interactions. The model presented here aims to create a more pronounced picture of what happens in the human gut by making a distinction in the underlying chemical reaction system between different type of resource molecules (monomers, simple- and complex resources) using more realistic rules for resource supply (compared to the previous chemostat-like approach), where resources are assumed to appear periodically and in distinct patches due to the feeding of the host. The microbes aggregating on the surface of these patches are modeled as local communities with distinct supply vectors representing the composition of the food particle.
 
-**Please refer to the [project website](https://jakab-mate.github.io/MiCroSim.jl/dev/readme/) for more detailed documentation**
-
-### Applicability
-
-* **Simulate the growth of an initially populated microbial community and find the equilibrium abundances**
+**Please refer to the [project website](https://jakab-mate.github.io/Patches/dev/readme/) for more detailed documentation**
 
 ### Installation
 To install patch_model directly from the github repository, use:
@@ -21,13 +15,15 @@ Pkg.add(url="https://github.com/Jakab-Mate/patch_model.git")
 using Patches
 ```
 
-### Workflow
-
-For more detailed explanations about what each function does, please refer to the [workflow section of the home page](https://jakab-mate.github.io/MiCroSim.jl/dev/readme/#Workflow)
-
-Detailed instructions for using each function can be found in the [User Manual](https://jakab-mate.github.io/MiCroSim.jl/dev/).
+### Usage
+Detailed instructions for performing simulations can be found in the [User Manual](https://jakab-mate.github.io/MiCroSim.jl/dev/).
 
 ### Acknowledgements
+While I was the only person working on this code, the model that was implemented mostly consists of the ideas of other researchers. I would like to thank them sincerely for their contributions:
+
+- `Matti Ruuskanen` particularly, for proposing the idea of ephemeral resource patches in the gut.
+
+- `István Scheuring`, `Gergely Boza` and `Leo Lahti` for sharing their valuable knowledge about different factors affecting microbial community structure and metabolism in the gut, along with their ideas about how to represent them in the model.
 
 ### Funding
 
