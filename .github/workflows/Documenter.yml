@@ -13,12 +13,12 @@ jobs:
 
     steps:
       - name: Check out main branch
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
         with:
           path: main_repo
 
       - name: Check out gh-pages branch
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
         with:
           ref: gh-pages
           path: gh_pages_repo
