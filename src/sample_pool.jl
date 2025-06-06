@@ -28,30 +28,26 @@ Default is `false`, where optimal pH is set to 7.0 for all species.
 - `a::Array{Float64}`: The strength of host control on the sampled species.
 - `k::Array{Float64}`: The critical abundance that triggers host control on the sampled species.
 """
-function sample_pool(p::PoolStruct, n_species::Int64, n_invaders::Int64; n_comms::Int64=1, seed::Int64=1234, ph::Bool=false)
+function sample_pool(p::PoolStruct, n_species::Int64, n_invaders::Int64; n_comms::Int64=1, seed::Int64=1234, ph::Bool=false, do_shuffle::Boool=false)
     rng = MersenneTwister(seed)
-
-    n_resources = size(p.pool, 1)
+    n_resources = length(p.consumption_rates[1])
     n_sampled = n_species + n_invaders
-
-    size_of_pool = size(p.pool, 3)
+    size_of_pool = length(p.consumption_rates)
     if size_of_pool < n_sampled
         throw(DomainError(n_sampled, "\n Number sampled ($n_sampled) should be smaller than the pool ($size_of_pool) \n"))
     end
 
-    if size_of_pool != length(p.family_ids) || size_of_pool != length(p.m) || size_of_pool != length(p.n_reactions) || size_of_pool != length(p.n_splits) || size_of_pool != length(p.a) || size_of_pool != length(p.k)
-        throw(DomainError("Size of pool does not match the size of the other pool attributes"))
-    end
-
     species_indices = sample(rng, 1:size_of_pool, n_sampled, replace=false)
-
-    species_C_matrices = p.pool[:, :, species_indices]
-    species_family_ids = p.family_ids[species_indices]
-    species_m = p.m[species_indices]
+    if do_shuffle
+        species_indices = shuffle(species_indices)
+    end
+    species_consumption_rates = p.consumption_rates[species_indices]
+    species_energy = p.energy[species_indices]
+    species_production_matrices = p.production_matrices[species_indices]
     species_n_reactions = p.n_reactions[species_indices]
     species_n_splits = p.n_splits[species_indices]
-    species_a = p.a[species_indices] 
-    species_k = p.k[species_indices]
+    species_m = p.m[species_indices]
+    species_types = p.types[species_indices]
 
     species_initial_abundances = vcat(rand!(rng, zeros(n_species)), zeros(n_invaders))
     resource_initial_abundances = rand!(rng, zeros(n_resources))
@@ -65,12 +61,14 @@ function sample_pool(p::PoolStruct, n_species::Int64, n_invaders::Int64; n_comms
     # All communities have random initial abundances (?)
     if n_comms > 1
         for i in 2:n_comms
-            species_initial_abundances = vcat(species_initial_abundances, vcat(rand!(rng, zeros(n_species)), zeros(n_invaders)))
-            resource_initial_abundances = vcat(resource_initial_abundances, rand!(rng, zeros(n_resources)))
+            species_initial_abundances = vcat(species_initial_abundances, zeros(n_species+n_invaders))
+            resource_initial_abundances = vcat(resource_initial_abundances, zeros(n_resources))
         end
     end
 
-    return SampleStruct(n_species, n_invaders, species_C_matrices, species_family_ids, species_m, species_n_reactions, species_n_splits, 
-    species_initial_abundances, resource_initial_abundances, species_a, species_k, species_ph_opts)
+    println("Length of resource states: ", length(resource_initial_abundances))
+
+    return SampleStruct(n_species, n_invaders, species_consumption_rates, species_energy, species_production_matrices, species_m, species_n_reactions,
+        species_n_splits, species_initial_abundances, resource_initial_abundances, species_ph_opts, species_types)
 
 end

@@ -1,219 +1,190 @@
-"""
-    create_metabolism(; n_resources::Int64=10, n_levels::Int64=5, energy_yields::String="Uniform_1", seed::Int64=1234)
-
-Generates a universal metabolism
-
-# Optional arguments
-- `n_resources::Int64`: Number of possible resources in the system. Default is `10`.
-- `n_levels::Int64`: Number of levels of decomposition in the system. Default is `5`.
-- `energy_yields::String`: The energy difference between two consecutive levels of decomposition. Default is `1` between all levels. Use "Random" to sample from a uniform distribution between 0 and 2 instead.
-- `rng::Int64`: Random number generator seed. Default is `1234`.
-
-# Output
-`Stoichiometric matrix, Energy yield matrix`
-"""
-function create_metabolism(; n_resources::Int64=10, n_levels::Int64=5, energy_yields::String="Uniform_1", seed::Int64=1234)
-    rng = MersenneTwister(seed)
-
-    if n_resources < n_levels
-        throw(DomainError("Number of resources should be greater than or equal to the number of levels"))
-    end
-
-    if n_resources < 2
-        throw(DomainError("Number of resources should be greater than 1"))
-    end
-
-    levels::Vector{Int64} = vcat(1:n_levels, rand(rng, 2:n_levels-1, n_resources - n_levels))
-    levels = sort(levels)
-    
-    W = zeros(Float64, n_resources)
-    for b in n_resources-1:-1:1
-        if levels[b] == levels[b+1]
-            W[b] = W[b+1]
-        else
-            if energy_yields == "Uniform_1"
-                W[b] = 2 * W[b+1] + 1
-            elseif energy_yields == "Random"
-                W[b] = 2 * W[b+1] + rand() * 2
-            end
-        end
-    end
-
-    D = zeros(Int64, n_resources, n_resources)
-    W_ba = zeros(Float64, n_resources, n_resources)
-    for i in 1:n_resources
-        for j in 1:n_resources
-            if levels[i] > levels[j]
-                D[i, j] = 2 ^ (levels[i] - levels[j])
-                W_ba[i, j] = W[j] - W[i] * D[i, j]
-            end
-        end
-    end
-
-    return D, W_ba
-end
-
 
 """
-    create_metabolism_2(; n_resources::Int64=10, seed::Int64=1234)
+Create a universal metabolism from which species reactions can be sampled
 
-Generates a universal metabolism, where stoichiometry is ignored and energy yields are sampled from a uniform distribution.
-
-# Optional arguments
-- `n_resources::Int64`: Number of possible resources in the system. Default is `10`.
-- `seed::Int64`: Random number generator seed. Default is `1234`.
-
-# Output
-`Stoichiometric matrix, Energy yield matrix`
+# Arguments
+- `n_complex:` The number of different complex (primary) resources
+- `n_simple:` The number of different simple resources
+- `n_monomer:` The number of different consume_all_monomers
+- `limited_pathyways:` Boolean. If true, introduce an additional level of limitation
+    (above energetic restraints), where for each resource, some resources can not be produced from it.
+    The number of "forbidden" resources is drawn from a uniform distribution
+    between 1 and the number of resources that have smaller monomer content than the consumed resource.
+- `seed:` Set a specific seed. Default is random.
 """
-function create_metabolism_2(; n_resources::Int64=10, seed::Int64=1234)
-    rng = MersenneTwister(seed)
-
-    if n_resources < 2
-        throw(DomainError("Number of resources should be greater than 1"))
-    end
-    
-    W = sort(rand(rng, Uniform(0, 15), n_resources); rev=true)
-
-    D = zeros(Int64, n_resources, n_resources)
-    W_ba = zeros(Float64, n_resources, n_resources)
-    for i in 1:n_resources
-        for j in 1:n_resources
-            if W[j] - W[i] > 0
-                D[i, j] = 1
-                W_ba[i, j] = W[j] - W[i] # 100% efficiency?
-            end
-        end
-    end
-
-    return D, W_ba
-end
-
-"""
-    create_species_pool(D::Matrix; n_families::Int64=5, family_size::Int64=100, dirichlet_hyper::Real=100, between_family_var::Real=0.1, inside_family_var::Real=0.05, h::Real=1, maintenance::Real=0.1, specialist::Real=1, generalist::Real=1, a_dist::Union{Distributions.Sampleable, Nothing}=nothing, k_dist::Union{Distributions.Sampleable, Nothing}=nothing, seed::Int64=1234)
-
-Create a pool of species by sampling reactions from a matrix denoting all possible reactions.
-
-# Mandatory arguments
-- `D::Matrix`: Matrix denoting all possible reactions. A square matrix whose size should be equal to the number of possible resources in the system. All reactions will be deemed possible whose values are non-zero.
-
-# Optional arguments
-- `n_families::Int64`: Number of families (groups of functionally similar species) in the species pool. Default is `5`.
-- `family_size::Int64`: Number of species in each family. Default is `100`.
-- `dirichlet_hyper::Real`: Hyperparameter for the Dirichlet distribution that is used for creating the species inside the same family. The higher its value, the more similar they will be. Default is `100`.
-- `maintenance::Real`: The expected cost of maintenance accross all species. Default is `0.1`.     
-- `between_family_var::Real`: Variance of the normal distribution used to sample the maintenance values between families. Default is `0.1`.
-- `inside_family_var::Real`: Variance of the normal distribution used to sample the maintenance values inside families. Default is `0.05`.
-- `h::Real`: Controls the allocation of reaction rates inside species. Default is `1`.
-- `specialist::Real`: The specialist part of the odds ratio specialists:generalists in the pool. Default is `1`.
-- `generalist::Real`: The generalist part of the odds ratio specialists:generalists in the pool. Default is `1`.
-- `a_dist::Union{Distributions.Sampleable, Nothing}`: Distribution to sample the strength of host control. Default is `Uniform(0.5, 1.5)`.
-- `k_dist::Union{Distributions.Sampleable, Nothing}`: Distribution to sample the critical abundance that triggers host control. Default is `Uniform(99.999, 100.001)`.
-- `spec_constraint::Union{Array{Bool}, Nothing}`: Boolean array of resources that specialists can consume. If nothing, first element is false, rest is true. Default is `nothing`.
-- `rng::Int64`: Random number generator seed. Default is `1234`.
-
-# Output
-`PoolStruct` with the following fields:
-- `pool::Array{Float64, 3}`: The matrices describing the metabolisms of the species inside the species pool.
-- `family_ids::Array{Int64}`: The family IDs of species
-- `m::Array{Float64}`: The maintenance costs of the species
-- `n_reactions::Array{Int64}`: The number of reactions of the species
-- `n_splits::Array{Float64}`: Reaction repertoire complexity metric of the species
-- `a::Array{Float64}`: The strength of host control on the species
-- `k::Array{Float64}`: The critical abundance that triggers host control on the species
-"""
-function create_species_pool(D::Matrix; n_families::Int64=5, 
-    family_size::Int64=100, dirichlet_hyper::Real=100, between_family_var::Real=0.1, inside_family_var::Real=0.05, 
-    h::Real=1, maintenance::Real=0.1, specialist::Real=1, generalist::Real=1, a_dist::Union{Distributions.Sampleable, Nothing}=nothing,
-    k_dist::Union{Distributions.Sampleable, Nothing}=nothing, spec_constraint::Union{Array{Bool}, Nothing}=nothing, seed::Int64=1234)
+function create_metabolism(n_complex::Int64,
+    n_simple::Int64,
+    n_monomer::Int64,
+    gapsize::Int64;
+    limited_pathways::Bool=false,
+    seed::Union{Real, nothing}=nothing)
 
     if isnothing(seed)
-        rng = MersenneTwister(1234)
+        seed = rand()
+    end
+    rng = MersenneTwister(seed)
+    n_resources = n_complex + n_simple + n_monomer
+    monomer_content = zeros(Int64, n_resources)
+    for i in 1:n_resources
+        if i <= n_complex
+            monomer_content[i] = 10 + gapsize
+        elseif i <= n_complex + n_simple
+            monomer_content[i] = rand(rng, 2:10)
+        else
+            monomer_content[i] = 1
+        end
+    end
+    sort!(monomer_content, rev=true)
+
+    if limited_pathways
+        limiting_matrix = zeros(Int64, n_resources, n_resources)
+        for i in 1:n_complex
+            allowed_simple_products = sample(rng, n_complex+1:n_complex+n_simple, rand(rng, 1:n_simple), replace=false)
+            allowed_monomer_products = sample(rng, n_complex+n_simple+1:n_resources, rand(rng, 1:n_monomer), replace=false)
+            all_allowed_products = vcat(allowed_simple_products, allowed_monomer_products)
+            for j in all_allowed_products
+                limiting_matrix[j, i] = 1
+            end
+        end
+
+        for i in n_complex+1:n_complex+n_simple
+            current_monomer_content = monomer_content[i]
+            smaller_monomer_content = []
+            for j in n_complex+1:n_complex+n_simple
+                if monomer_content[j] < current_monomer_content
+                    push!(smaller_monomer_content, j)
+                end
+            end
+            #print("smaller_monomer_content: ", smaller_monomer_content)
+            if monomer_content[i] == monomer_content[n_complex + n_simple]
+                allowed_simple_products = []
+            else
+                allowed_simple_products = sample(rng, smaller_monomer_content, rand(rng, 1:length(smaller_monomer_content)), replace=false)
+            end
+
+            allowed_monomer_products = sample(rng, n_complex+n_simple+1:n_resources, rand(rng, 1:n_monomer), replace=false)
+            all_allowed_products = vcat(allowed_simple_products, allowed_monomer_products)
+            for j in all_allowed_products
+                limiting_matrix[j, i] = 1
+            end
+        end
+        return monomer_content, limiting_matrix
     else
-        rng = MersenneTwister(seed)
+        return monomer_content, nothing
     end
 
-    n_resources::Int64 = length(D[:, 1])
+end
 
-    if isnothing(spec_constraint)
-        spec_constraint = vcat([false], repeat([true], n_resources-1))
+
+"""
+Create a species pool
+
+# Arguments
+- `pool_size:` number of species in pool
+
+"""
+function create_species_pool(pool_size::Int64, n_complex::Int64, n_simple::Int64, n_monomer::Int64, monomer_content::Array{Int64};
+    seed::Union{Real, nothing}=nothing,
+    maintenance::Real=0.1, 
+    specialist::Real=1, 
+    generalist::Real=1, 
+    gen_avg_usage::Float64=0.5,
+    gen_sd_usage::Float64=0.05,
+    spec_avg_usage::Float64=0.5,
+    spec_sd_usage::Float64=0.05,
+    avg_efficiency::Float64=0.5,
+    sd_complex::Float64=0.05,
+    sd_simple::Float64=0.1,
+    sd_monomer::Float64=0.2,
+    gen_n_consumed::Int64=3,
+    spec_n_consumed::Int64=2,
+    h::Float64=1.0,
+    limiting_matrix::Union{Matrix{Int64}, Nothing}=nothing,
+    consume_all_monomers::Bool=false)
+
+    # Tradeoff controlling the sum of consumption rates (h)?
+    # Linear version of this is encapsulated in the number of reactions tradoff.
+
+    if isnothing(seed)
+        seed = rand()
     end
+    rng = MersenneTwister(seed)
+    n_resources::Int64 = length(monomer_content)
+    if isnothing(limiting_matrix)
+        limiting_matrix = ones(Int64, n_resources, n_resources)
+    end
+    resource_sd = vcat(repeat([sd_complex], n_complex), repeat([sd_simple], n_simple), repeat([sd_monomer], n_monomer))
     
-    specialist_prob::Int64 = round(Int64, specialist / (generalist + specialist) * 100)
-    choices = vcat(fill("Spec", specialist_prob), fill("No", 100-specialist_prob))
-    spec_gen = [rand(rng, choices) for _ in 1:n_families]
+    specialist_prob = specialist / (generalist + specialist)
+    consumption_rates = []
+    energy = []
+    production = []
 
-    pool = zeros(n_resources, n_resources, n_families * family_size)
-    family_ids = Array{Int64}(undef, n_families * family_size)
-    m = Array{Float64}(undef, n_families * family_size)
-    a = Array{Float64}(undef, n_families * family_size)
-    k = Array{Float64}(undef, n_families * family_size)
-    n_reactions = Array{Int64}(undef, n_families * family_size)
-    n_splits = Array{Float64}(undef, n_families * family_size)
-
-    between_family_m_dist = Normal(maintenance, between_family_var)
-    if isnothing(a_dist)
-        a_dist = Uniform(0.5, 1.5)
-    end
-    if isnothing(k_dist)
-        k_dist = Uniform(99.999, 100.001) # relate this to alpha? (resource input flux)
-    end
-
-    D_spec = D .* spec_constraint'
-    for family in 1:n_families
-        family_range = (family-1) * family_size + 1 : family * family_size
-        family_ids[family_range] .= family
-        family_idx_start = (family-1) * family_size 
-        family_m_value = rand(rng, between_family_m_dist)
-        while family_m_value <= 0
-            family_m_value = rand(rng, between_family_m_dist)
-        end
-        inside_family_m_dist = Normal(family_m_value, inside_family_var)
-
-        family_a_value = rand(rng, a_dist)
-        family_k_value = rand(rng, k_dist)
-        a[family_range] .= family_a_value
-        k[family_range] .= family_k_value
-
-        if spec_gen[family] == "Spec"
-            family_number_of_reactions = rand(rng, [3, 4])
-        else
-            family_number_of_reactions = rand(rng, [1, 2])
-        end
-
-        n_reactions[family_range] .= family_number_of_reactions
-
-        prior_values = normalize(rand!(rng, zeros(family_number_of_reactions))) .* dirichlet_hyper
-        Dir_dist = Distributions.Dirichlet(prior_values)
-
-        if spec_gen[family] == "Spec"
-            family_reaction_indices = sample_reaction_indices(rng, D_spec, family_number_of_reactions)
-        else
-            family_reaction_indices = sample_reaction_indices(rng, D, family_number_of_reactions)
-        end
-
-        family_n_splits = 0
-        for react in family_reaction_indices
-            family_n_splits += (react[1] - react[2])
-        end
-        n_splits[family_range] .= family_n_splits
-
-        for species in 1:family_size
-            species_m_value = rand(rng, inside_family_m_dist)
-            while species_m_value <= 0
-                species_m_value = rand(rng, inside_family_m_dist)
+    types = Array{String}(undef, pool_size)
+    m = Array{Float64}(undef, pool_size)
+    n_reactions = Array{Int64}(undef, pool_size)
+    n_splits = Array{Float64}(undef, pool_size)
+    
+    println("generating species")
+    for species in 1:pool_size
+        decider = rand(rng)
+        if consume_all_monomers
+            if decider < specialist_prob
+                types[species] = "spec"
+                n_reactions[species] = spec_n_consumed
+                consumed_indices = sample(rng, n_complex+1:n_complex+n_simple, spec_n_consumed, replace=false)
+                species_consumption_rates, species_energy, species_production, species_n_splits = partition_resources(
+                    n_resources, consumed_indices, 1/spec_n_consumed, monomer_content, limiting_matrix, spec_avg_usage, spec_sd_usage, avg_efficiency, resource_sd, rng)
+                species_consumption_rates[n_complex+n_simple+1:n_resources] .= 1.0
+            else
+                types[species] = "gen"
+                n_reactions[species] = gen_n_consumed
+                consumed_primary = sample(rng, 1:n_complex, 1)
+                primary_and_simple_range = [x for x in 1:n_complex+n_simple if x != consumed_primary[1]]
+                consumed_simple = sample(rng, primary_and_simple_range, gen_n_consumed-1, replace=false)
+                consumed_indices = vcat(consumed_primary, consumed_simple)
+                species_consumption_rates, species_energy, species_production, species_n_splits = partition_resources(
+                    n_resources, consumed_indices, 1/gen_n_consumed, monomer_content, limiting_matrix, gen_avg_usage, gen_sd_usage, avg_efficiency, resource_sd, rng)
+                species_consumption_rates[n_complex+n_simple+1:n_resources] .= 1.0
             end
-            m[family_idx_start + species] = species_m_value
-            species_values = normalize(rand(rng, Dir_dist), h=h)
-            for reaction in 1:family_number_of_reactions
-                pool[family_reaction_indices[reaction]..., family_size*(family-1)+species] = species_values[reaction]
+        else
+            if decider < specialist_prob
+                types[species] = "spec"
+                n_reactions[species] = spec_n_consumed
+                consumed_indices = sample(rng, n_complex+1:n_resources, spec_n_consumed, replace=false)
+                species_consumption_rates, species_energy, species_production, species_n_splits = partition_resources(
+                    n_resources, consumed_indices, 1/spec_n_consumed, monomer_content, limiting_matrix, spec_avg_usage, spec_sd_usage, avg_efficiency, resource_sd, rng)
+            else
+                types[species] = "gen"
+                n_reactions[species] = gen_n_consumed
+                consumed_primary = sample(rng, 1:n_complex, 1)
+                consumed_simple = sample(rng, n_complex+1:n_complex+n_simple+n_monomer, gen_n_consumed-1, replace=false)
+                consumed_indices = vcat(consumed_primary, consumed_simple)
+                species_consumption_rates, species_energy, species_production, species_n_splits = partition_resources(
+                    n_resources, consumed_indices, 1/gen_n_consumed, monomer_content, limiting_matrix, gen_avg_usage, gen_sd_usage, avg_efficiency, resource_sd, rng)
             end
-
-            #n_splits[family_idx_start + species] = sum((D .- 1) .*  pool[:, :, family_size*(family-1)+species])
         end
 
+        if consume_all_monomers
+            #println("species_consumption_rates before normalization: ", species_consumption_rates)
+            species_consumption_rates[1:n_complex+n_simple] = normalize(species_consumption_rates[1:n_complex+n_simple], h=h)
+            #println("species_consumption_rates after normalization: ", species_consumption_rates)
+        else   
+            #println("species_consumption_rates before normalization: ", species_consumption_rates)
+            species_consumption_rates = normalize(species_consumption_rates, h=h)
+            #println("species_consumption_rates after normalization: ", species_consumption_rates)
+        end
+
+        species_m_value = bounded_rand(rng, Normal(maintenance, 0.01), (0, 1))
+        m[species] = species_m_value
+
+        push!(consumption_rates, species_consumption_rates)
+        push!(energy, species_energy)
+        push!(production, species_production)
+        n_splits[species] = species_n_splits
     end
 
-    return PoolStruct(pool, family_ids, m, n_reactions, n_splits, a, k)
+    println("species generated")
 
+    return PoolStruct(consumption_rates, energy, production, m, n_reactions, n_splits, types)
 end

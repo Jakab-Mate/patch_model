@@ -3,4 +3,6 @@
 /Project.toml.bak
 /src/setparams_run.jl
 /src/test.jl
+/src/not_used.jl
+/src/temp_test.jl
 misc/
