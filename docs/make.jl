@@ -4,7 +4,7 @@ using Patches, Documenter
 ENV["GKSwstype"] = "100"
 
 generated_path = joinpath(@__DIR__, "src")
-base_url = "https://github.com/Jakab-Mate/Patches.jl/blob/main/"
+base_url = "https://github.com/Jakab-Mate/patch_model.jl/blob/main/"
 isdir(generated_path) || mkdir(generated_path)
 
 readme_path = joinpath(@__DIR__, "../../main_repo/README.md")
@@ -29,7 +29,8 @@ makedocs(
         "Home" => "readme.md",
         "Manual" => "index.md",
         "Tutorials" => Any[
-            "Baseline settings" => "example1.md"
+            "Baseline settings" => "example1.md",
+            "Order of introductions" => "example2.md"
         ]
     ],
     remotes = Dict(joinpath(pwd(), "main_repo") => Documenter.Remotes.GitHub("Jakab-Mate", "patch_model.jl"))
