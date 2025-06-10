@@ -29,7 +29,7 @@ makedocs(
         "Home" => "readme.md",
         "Manual" => "index.md",
         "Tutorials" => Any[
-            "Initially populated community" => "example1.md"
+            "Baseline settings" => "example1.md"
         ]
     ],
     remotes = Dict(joinpath(pwd(), "main_repo") => Documenter.Remotes.GitHub("Jakab-Mate", "patch_model.jl"))
