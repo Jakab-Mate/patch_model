@@ -4,7 +4,7 @@
 
 This model builds on our [previous project](https://github.com/Jakab-Mate/MiCroSim.jl), which simulates microbial community dynamics based solely on their metabolic interactions. The model presented here aims to create a more pronounced picture of what happens in the human gut by making a distinction in the underlying chemical reaction system between different type of resource molecules (monomers, simple- and complex resources) using more realistic rules for resource supply (compared to the previous chemostat-like approach), where resources are assumed to appear periodically and in distinct patches due to the feeding of the host. The microbes aggregating on the surface of these patches are modeled as local communities with distinct supply vectors representing the composition of the food particle.
 
-**Please refer to the [project website](https://jakab-mate.github.io/Patches/dev/readme/) for more detailed documentation**
+**Please refer to the [project website](https://jakab-mate.github.io/patch_model/dev/readme/) for more detailed documentation**
 
 ### Installation
 To install patch_model directly from the github repository, use:
