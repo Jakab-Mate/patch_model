@@ -23,7 +23,7 @@ readme_path = joinpath(@__DIR__, "../../main_repo/README.md")
 makedocs(
     format = Documenter.HTML(inventory_version = "0.1"),
     authors = "Jakab Máté",
-    sitename = "Patches.jl",
+    sitename = "patch_model.jl",
     modules = [Patches],
     pages = [
         "Home" => "readme.md",
@@ -32,8 +32,7 @@ makedocs(
             "Baseline settings" => "example1.md",
             "Order of introductions" => "example2.md"
         ]
-    ],
-    remotes = Dict(joinpath(pwd(), "main_repo") => Documenter.Remotes.GitHub("Jakab-Mate", "patch_model.jl"))
+    ]
 )
 
 deploydocs(
