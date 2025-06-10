@@ -38,8 +38,8 @@ function create_metabolism(n_complex::Int64,
     if limited_pathways
         limiting_matrix = zeros(Int64, n_resources, n_resources)
         for i in 1:n_complex
-            allowed_simple_products = sample(rng, n_complex+1:n_complex+n_simple, rand(rng, 1:n_simple), replace=false)
-            allowed_monomer_products = sample(rng, n_complex+n_simple+1:n_resources, rand(rng, 1:n_monomer), replace=false)
+            allowed_simple_products = sample(rng, n_complex+1:n_complex+n_simple, rand(rng, Int(max(1, floor(n_simple/2))):n_simple), replace=false)
+            allowed_monomer_products = sample(rng, n_complex+n_simple+1:n_resources, rand(rng, Int(max(1, floor(n_monomer/2))):n_monomer), replace=false)
             all_allowed_products = vcat(allowed_simple_products, allowed_monomer_products)
             for j in all_allowed_products
                 limiting_matrix[j, i] = 1

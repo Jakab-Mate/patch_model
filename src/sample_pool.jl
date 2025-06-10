@@ -28,7 +28,7 @@ Default is `false`, where optimal pH is set to 7.0 for all species.
 - `a::Array{Float64}`: The strength of host control on the sampled species.
 - `k::Array{Float64}`: The critical abundance that triggers host control on the sampled species.
 """
-function sample_pool(p::PoolStruct, n_species::Int64, n_invaders::Int64; n_comms::Int64=1, seed::Int64=1234, ph::Bool=false, fix_order::Boool=false)
+function sample_pool(p::PoolStruct, n_species::Int64, n_invaders::Int64; n_comms::Int64=1, seed::Int64=1234, ph::Bool=false, fix_order::Bool=false)
     rng = MersenneTwister(seed)
     n_resources = length(p.consumption_rates[1])
     n_sampled = n_species + n_invaders
