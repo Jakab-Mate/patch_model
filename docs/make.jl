@@ -13,7 +13,6 @@ makedocs(
     format = Documenter.HTML(inventory_version = "0.1"),
     authors = "Jakab Máté",
     sitename = "patch_model",
-    modules = [Patches],
     pages = [
         "Home" => "readme.md",
         "Manual" => "index.md",
@@ -21,7 +20,8 @@ makedocs(
             "Baseline settings" => "example1.md",
             "Order of introductions" => "example2.md"
         ]
-    ]
+    ],
+    remotes = Dict(pwd() => Documenter.Remotes.GitHub("Jakab-Mate", "patch_model"))
 )
 
 deploydocs(
