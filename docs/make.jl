@@ -22,8 +22,7 @@ makedocs(
             "Order of introductions" => "example2.md"
         ]
     ],
-    repo = "https://github.com/Jakab-Mate/patch_model",
-    remotes = Dict(pwd() => Documenter.Remotes.GitHub("Jakab-Mate", "patch_model"))
+    repo = Documenter.Remotes.GitHub("Jakab-Mate", "patch_model")
 )
 
 deploydocs(
