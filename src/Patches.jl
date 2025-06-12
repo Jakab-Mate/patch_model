@@ -4,17 +4,15 @@ using Random: rand!, MersenneTwister, shuffle
 using Dates: now
 using Plots #: plot, plot!, savefig
 theme(:wong)
-using LinearAlgebra: norm
 using StatsBase: sample
 using MicrobiomeAnalysis
-using Distributions: Normal, Exponential, Uniform, Beta, Gamma, Dirichlet
-using DifferentialEquations: ODEProblem, solve, Tsit5, Rodas4
-using Graphs: Graph, SimpleGraph, DiGraph, SimpleDiGraph, add_edge!, add_vertex!, vertices, edges
-using GraphPlot: graphplot, plot, plot!, savefig
-using Compose: Compose, @draw, @cairo, @cairo_dpi, @cairo_dpi_size
-using CSV: CSV, read, write
+using Distributions: Normal, Uniform, Dirichlet
+using DifferentialEquations: ODEProblem, solve, KenCarp4, CallbackSet, PeriodicCallback
+using Graphs: SimpleDiGraph, add_edge!, add_vertex!, vertices, edges
+using GraphPlot: gplot, circular_layout
+using Compose: compose, draw, rectangle, fill, cm
 using Base.Threads
-using JLD2: jldopen, JLD2, save, load, @load, @save
+using JLD2: @save
 import Cairo, Fontconfig
 
 include("structs.jl")
