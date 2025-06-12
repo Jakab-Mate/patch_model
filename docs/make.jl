@@ -29,5 +29,6 @@ deploydocs(
     repo = "github.com/Jakab-Mate/patch_model.git",
     branch = "gh-pages",
     devbranch = "main",
-    target = "build"
+    target = "build",
+    deploy_config = Documenter.GitHubActions()
 )
