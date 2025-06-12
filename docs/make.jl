@@ -18,7 +18,7 @@ makedocs(
         "Home" => "readme.md",
         "Manual" => "index.md",
         "Tutorials" => Any[
-            "Baseline settings" => "example1.md",
+            "Default parameters" => "example1.md",
             "Order of introductions" => "example2.md"
         ]
     ],
