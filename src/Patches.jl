@@ -8,7 +8,7 @@ using LinearAlgebra: norm
 using StatsBase: sample
 using MicrobiomeAnalysis
 using Distributions: Normal, Exponential, Uniform, Beta, Gamma, Dirichlet
-using DifferentialEquations: DifferentialEquation, ODEProblem, solve, Tsit5, Rodas4
+using DifferentialEquations: ODEProblem, solve, Tsit5, Rodas4
 using Graphs: Graph, SimpleGraph, DiGraph, SimpleDiGraph, add_edge!, add_vertex!, vertices, edges
 using GraphPlot: graphplot, plot, plot!, savefig
 using Compose: Compose, @draw, @cairo, @cairo_dpi, @cairo_dpi_size
