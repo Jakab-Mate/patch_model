@@ -2,8 +2,8 @@ function grab_ends(t, sim_length, transient_length,
         gen, spec, counts, shannons, MCI)
 
     relaxation_length = sim_length - transient_length
-    transient_end_indices = findall(t .<= transient_length .&& t .>= transient_length * 0.9)
-    relaxation_end_indices = findall(t .<= sim_length .&& t .>= sim_length - relaxation_length * 0.1)
+    transient_end_indices = findall(t .<= transient_length .& t .>= transient_length * 0.9)
+    relaxation_end_indices = findall(t .<= sim_length .& t .>= sim_length - relaxation_length * 0.1)
 
     gen_rel_end = mean(gen[relaxation_end_indices])
     spec_rel_end = mean(spec[relaxation_end_indices])

@@ -42,13 +42,3 @@ jobs:
 
       - name: Run tests
         uses: julia-actions/julia-runtest@v1
-
-      - name: Process code coverage
-        uses: julia-actions/julia-processcoverage@v1
-
-      - name: Run codecov action
-        uses: codecov/codecov-action@v1
-        with:
-          file: lcov.info
-        env:
-          CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
