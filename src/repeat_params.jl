@@ -3,7 +3,7 @@ MANDATORY ARGUMENTS
 - n_repeats::Int64: Number of repetitions for the simulation.
 - basepath::String: Path to the directory where the results will be saved.
 
-OPTIONAL ARGUMENTS
+OPTIONAL ARGUMENTS  
 Resource parameters:
 - `n_complex`::Int64: Number of complex resources. Default is `3`.
 - `n_simple`::Int64: Number of simple resources. Default is `10`.

@@ -9,12 +9,25 @@ Each simulation will have its own subfolder in the specified output folder, wher
 
 * `params`: Parameters of the simulation
 * `beta_diversity plot`: A measure of how different the composition of local communities are
+![Beta diversity plot](./images/beta_diversity.png)
+
 * `shannon_diversity plot`: A measure of the diversity of all populations of the simulation pooled together
+![Shannon diversity plot](./images/shannon_diversity_.png)
+
 * `MCI plot`: Metabolic Capacity Index of the of the system. Tracks the total number of different reactions by taking all of the species stoichiometric matrices and adding 1 for each position where at least 1 species has a non-zero entry
+![MCI plot](./images/MCI.png)
+
 * `consumer_types plot`: Tracks the total number of primary consumer (generalist) and secondary consumer (specialist) species across the system
+![Consumer types plot](./images/consumer_types.png)
+
 * `species_counts plot`: Tracks the total number of different species across the system
+![Species counts plot](./images/species_counts.png)
+
 * `comm_totals plot`: Tracks the total abundance of members for each local community
+![Community total abundances plot](./images/comm_totals.png)
+
 * `community graph plots`: A separate graph for each local community, depicting the active pathways. Species nodes are blue, resource nodes are green. Red arrows indicate consumption, green arrows indicate production. Arrow widths are weighted according to the pathway fluxes.
+![Community graph plots](./images/community_graph1.png)
 
 Outside of the individual run folders, we will find the following outputs:
 

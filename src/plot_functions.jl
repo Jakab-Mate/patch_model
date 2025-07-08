@@ -205,7 +205,7 @@ function plot_MCI(MCI_ts, t, path, multiple)
         data = reduce(hcat, MCI_ts)
         means = [sum(row) / length(row) for row in eachrow(data)]
         stds = [sqrt(sum((x - mean)^2 for x in row) / length(row)) for (row, mean) in zip(eachrow(data), means)]
-        fig = plot(t, means, ribbon=stds, fillalpha=0.2, xlabel="Time", ylabel="Beta diversity", linewidth=3)
+        fig = plot(t, means, ribbon=stds, fillalpha=0.2, xlabel="Time", ylabel="MCI", linewidth=3)
     else
         fig = plot(t, MCI_ts, linewidth=3, xlabel="Time", ylabel="Number of diff. reactions")
     end
