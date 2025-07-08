@@ -19,7 +19,7 @@ function create_metabolism(n_complex::Int64,
     seed::Union{Real, Nothing}=nothing)
 
     if isnothing(seed)
-        seed = rand()
+        seed = Int(rand())
     end
     rng = MersenneTwister(seed)
     n_resources = n_complex + n_simple + n_monomer
@@ -105,7 +105,7 @@ function create_species_pool(pool_size::Int64, n_complex::Int64, n_simple::Int64
     # Linear version of this is encapsulated in the number of reactions tradoff.
 
     if isnothing(seed)
-        seed = rand()
+        seed = Int(rand())
     end
     rng = MersenneTwister(seed)
     n_resources::Int64 = length(monomer_content)
