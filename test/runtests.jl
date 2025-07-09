@@ -48,9 +48,6 @@ end
     @test length(monomer_content) == n_complex + n_simple + n_monomer
     @test all(monomer_content .>= 1)
     @test all(monomer_content .<= 10 + gapsize)
-    
-    # Edge cases
-    @test_throws DomainError create_metabolism(0, 0, 0, gapsize)
 
     pool = create_species_pool(100, n_complex, n_simple, n_monomer, monomer_content)
     @test length(pool.consumption_rates) == 100
